@@ -36,17 +36,17 @@ import glob
 # add header header=None, names["ex1", "ex2", "ex3"]
 
 
+############################################### PATHS ##################################################################
+si7_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-SI.csv'
+si13_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\13-SI.csv'
+on7_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-ON.csv'
+on13_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\13-ON.csv'
+sv7_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-SV.csv'
+sv13_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\13-SV.csv'
 
 
 
-
-
-
-
-
-
-
-############################################CREATE DATA FRAMES#############################################################
+############################################CREATE DATA FRAMES##########################################################
 
 # bw7=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-BW.csv')
 # bw10=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\10-BW.csv')
@@ -55,19 +55,18 @@ import glob
 # bw_master = pd.concat(frame)
 
 
-
-si7=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-SI.csv')
-si13=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\13-SI.csv')
+si7=pd.read_csv(si7_p)
+si13=pd.read_csv(si13_p)
 frame = [si7, si13]
 sisales_master = pd.concat(frame)
 
-on7=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-ON.csv')
-on13=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\13-ON.csv')
+on7=pd.read_csv(on7_p)
+on13=pd.read_csv(on13_p)
 frame=[on7, on13]
 on_sales_master = pd.concat(frame)
 
-sv7=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-SV.csv')
-sv13=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\13-SV.csv')
+sv7=pd.read_csv(sv7_p)
+sv13=pd.read_csv(sv13_p)
 frame = [sv7, sv13]
 sv_sales_master = pd.concat(frame)
 
