@@ -35,13 +35,57 @@ import glob
 # #skip rows =1 will not read rows you ask or header=1 row
 # add header header=None, names["ex1", "ex2", "ex3"]
 
-########################################################################################################################
 
-bw7=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-BW.csv')
-bw10=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\10-BW.csv')
-bw11=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\11-BW.csv')
-frame = [bw7, bw10, bw11]
-bw_master = pd.concat(frame)
 
-bw_master.to_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\BW_Master.csv', index = False)
 
+
+
+
+
+
+
+
+
+############################################CREATE DATA FRAMES#############################################################
+
+# bw7=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-BW.csv')
+# bw10=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\10-BW.csv')
+# bw11=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\11-BW.csv')
+# frame = [bw7, bw10, bw11]
+# bw_master = pd.concat(frame)
+
+
+
+si7=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-SI.csv')
+si13=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\13-SI.csv')
+frame = [si7, si13]
+sisales_master = pd.concat(frame)
+
+on7=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-ON.csv')
+on13=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\13-ON.csv')
+frame=[on7, on13]
+on_sales_master = pd.concat(frame)
+
+sv7=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\7-SV.csv')
+sv13=pd.read_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\13-SV.csv')
+frame = [sv7, sv13]
+sv_sales_master = pd.concat(frame)
+
+
+
+################################################ FILE OUTPUTS ##########################################################
+
+#bw_master.to_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\BW_Master.csv', index = False)
+#si_master.to_csv(r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\SI_Master.csv', index = False)
+path = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\desktop enchliving\WH File\Master.xlsx'
+
+fileName = pd.ExcelWriter(path, engine = 'xlsxwriter')
+
+# bw_master.to_excel(fileName, sheet_name='BW', index = False)
+si_master.to_excel(fileName, sheet_name='SI Sales', index = False)
+on_master.to_excel(fileName, sheet_name='ON Sales', index = False)
+sv_master.to_excel(fileName, sheet_name='SV Sales', index = False)
+
+
+
+fileName.save()
