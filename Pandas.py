@@ -36,7 +36,7 @@ import glob
 # add header header=None, names["ex1", "ex2", "ex3"]
 
 
-############################################### PATHS ##################################################################
+######################################################### PATHS ########################################################
 si7_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-SI.csv'
 si13_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13-SI.csv'
 on7_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-ON.csv'
@@ -46,7 +46,7 @@ sv13_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Pro
 
 save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project'
 
-############################################CREATE DATA FRAMES##########################################################
+################################################## CREATE DATA FRAMES ##################################################
 
 # bw7=pd.read_csv(r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-BW.csv')
 # bw10=pd.read_csv(r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\10-BW.csv')
@@ -72,7 +72,13 @@ sv_sales_master = pd.concat(frame)
 
 
 
-################################################ FILE OUTPUTS ##########################################################
+###############################################Changes####################################################
+
+
+
+
+
+##################################################### FILE OUTPUTS #####################################################
 
 #bw_master.to_csv(r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\BW_Master.csv', index = False)
 #si_master.to_csv(r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\SI_Master.csv', index = False)
