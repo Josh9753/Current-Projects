@@ -1,3 +1,4 @@
+
 import pandas as pd
 
 ######################################################## PATHS ########################################################
@@ -7,6 +8,13 @@ on7_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Join
 on13_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-ON.csv'
 sv7_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-SV.csv'
 sv13_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-SV.csv'
+
+si7_inv_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-SI-Inv.xls'
+si13_inv_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-SI-Inv.xls'
+on7_inv_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-ON-Inv.xls'
+on13_inv_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-ON-Inv.xls'
+sv7_inv_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-SV-Inv.xls'
+sv13_inv_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-SV-Inv.xls'
 
 iv_rep = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\05 - INVENTORY\Inventory Report - For Audit - June 20, 2022.xlsx'
 
@@ -33,12 +41,12 @@ sv13=pd.read_csv(sv13_p)
 frame = [sv7, sv13]
 sv_sales_master = pd.concat(frame)
 
-si7_inv=pd.read_excel(r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-SI-Inv.xls')
-si13_inv=pd.read_excel(r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-SI-Inv.xls')
-on7_inv=pd.read_excel(r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-ON-Inv.xls')
-on13_inv=pd.read_excel(r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-ON-Inv.xls')
-sv7_inv=pd.read_excel(r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-SV-Inv.xls')
-sv13_inv=pd.read_excel(r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-SV-Inv.xls')
+si7_inv=pd.read_excel(si7_inv_p)
+si13_inv=pd.read_excel(si13_inv_p)
+on7_inv=pd.read_excel(on7_inv_p)
+on13_inv=pd.read_excel(on13_inv_p)
+sv7_inv=pd.read_excel(sv7_inv_p)
+sv13_inv=pd.read_excel(sv13_inv_p)
 
 frame = [si7_inv, si13_inv]
 si_inv_master = pd.concat(frame)
@@ -146,13 +154,13 @@ sales_master['CRTN CBM'] =round(sales_master['CRTN CBM'],4)
 #### Summary sheets
 #Sales by wh by month
 
-sales_month=pd.DataFrame()
+sales_month = pd.DataFrame()
 
-if sales_master['WH'] == 'on':
-    if sales_master['Month'] == '01':
-        sales_month[0,'ON'] = sum(sales_master['amount'])
-
-
+# if sales_master['WH'] == 'on':
+#     if sales_master['Month'] == '01':
+#         sales_month[0,'ON'] = sum(sales_master['amount'])
+sales_month['ON'] = sales_master.groupby('WH'=='on','Month'=='01')['amount'].sum()
+print(sales_month['ON'])
 ##################################################### FILE OUTPUTS #####################################################
 
 fileName = pd.ExcelWriter(save_Loc, engine = 'xlsxwriter')
