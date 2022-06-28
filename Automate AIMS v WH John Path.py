@@ -16,8 +16,8 @@ on13_inv_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint
 sv7_inv_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-SV-Inv.xls'
 sv13_inv_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13-SV-Inv.xls'
 
-on_A_p = r'PATH HERE'
-sv_A_p = r'PATH HERE'
+on_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\01 - AIMS RAW DATA\Automating reports\Inventory ON.xlsx'
+sv_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\01 - AIMS RAW DATA\Automating reports\Inventory SV.xlsx'
 
 #### Output: Change Date to Today!!!!!!!!!!!!!!!
 save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock 06.28.22.xlsx'
@@ -36,8 +36,8 @@ on_AIMS = pd.concat(frame)
 frame = [sv7_inv, sv13_inv]
 sv_AIMS = pd.concat(frame)
 
-on_ACTUAL = pd.read_excel(on_A_p,engine= 'xlrd')
-sv_ACTUAL = pd.read_excel(sv_A_p,engine= 'xlrd')
+on_ACTUAL = pd.read_excel(on_A_p,engine= 'openpyxl')
+sv_ACTUAL = pd.read_excel(sv_A_p,engine= 'openpyxl')
 
 ##################################################### Changes ##########################################################
 # Creating WH col
@@ -71,32 +71,37 @@ sv_AIMS = sv_AIMS[['WH','style','grp','desc','color','division','cubic_ft','weig
                                'caseqty', 'cubic']]
 
 # Creating Sty_col column
-on_AIMS["Sty_Col"] = on_AIMS["style"] + "_" + on_AIMS["color"]
-sv_AIMS["Sty_Col"] = sv_AIMS["style"] + "_" + sv_AIMS["color"]
+on_AIMS["Sty_Color"] = on_AIMS["style"] + "_" + on_AIMS["color"]
+sv_AIMS["Sty_Color"] = sv_AIMS["style"] + "_" + sv_AIMS["color"]
 
 # Creating WH QTY INFO COL
 on_AIMS_master =  pd.merge(on_AIMS,on_ACTUAL,on='Sty_Color',how='inner')
 sv_AIMS_master =  pd.merge(sv_AIMS,sv_ACTUAL,on='Sty_Color',how='inner')
 
 #rename
-on_ACTUAL['WH Qty Info'] = on_ACTUAL['Available']
-del on_ACTUAL['Available']
-sv_ACTUAL['WH Qty Info'] = sv_ACTUAL['Available']
-del sv_ACTUAL['Available']
+on_AIMS_master['WH Qty Info'] = on_AIMS_master['Available']
+del on_AIMS_master['Available']
+sv_AIMS_master['WH Qty Info'] = sv_AIMS_master['Available']
+del sv_AIMS_master['Available']
 
 on_AIMS_master = on_AIMS_master[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','unit',
-                               'caseqty', 'cubic', 'Sty_Color',""]]
+                               'caseqty', 'cubic', 'Sty_Color','WH Qty Info']]
 sv_AIMS_master = sv_AIMS_master[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','unit',
                                'caseqty', 'cubic', 'Sty_Color','WH Qty Info']]
 
+on_AIMS_master['unit'] = on_AIMS_master['unit'].astype(float)
+sv_AIMS_master['unit'] = sv_AIMS_master['unit'].astype(float)
+on_AIMS_master['WH Qty Info'] = on_AIMS_master['WH Qty Info'].astype(float)
+sv_AIMS_master['WH Qty Info'] = sv_AIMS_master['WH Qty Info'].astype(float)
 # difference col to create fails
-on_AIMS_master['Diff'] = on_AIMS_master["unit"] - on_AIMS_master["Available"]
+on_AIMS_master['Diff'] = on_AIMS_master["unit"] - on_AIMS_master["WH Qty Info"]
+sv_AIMS_master['Diff'] = sv_AIMS_master["unit"] - sv_AIMS_master["WH Qty Info"]
 
 # Qty Close
-if abs(on_AIMS_master['Diff']) >= 10:
-    on_AIMS_master['Qty Close'] = "Fail"
-else:
-    on_AIMS_master['Qty_Close'] = "OK"
+#if abs(on_AIMS_master['Diff']) >= 10:
+#    on_AIMS_master['Qty Close'] = "Fail"
+#else:
+#    on_AIMS_master['Qty_Close'] = "OK"
 
 ##################################################### FILE OUTPUTS #####################################################
 
