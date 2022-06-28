@@ -150,13 +150,13 @@ sales_master['CRTN CBM'] =round(sales_master['CRTN CBM'],4)
 #### Summary sheets
 #Sales by wh by month
 
-sales_month = pd.DataFrame()
-sales_month_master = pd.DataFrame()
+#sales_month = pd.DataFrame()
+#sales_month_master = pd.DataFrame()
 
-sales_month = sales_master[sales_master.WH =='ON']
-sales_month = sales_month[['WH','Month','amount']]
-sales_month_on_01 =sales_month[sales_month.Month =='01']
-sales_month_master[1,0] = sum(sales_month_on_01['amount'])
+#sales_month = sales_master[sales_master.WH =='ON']
+#sales_month = sales_month[['WH','Month','amount']]
+#sales_month_on_01 =sales_month[sales_month.Month =='01']
+#sales_month_master[1,0] = sum(sales_month_on_01['amount'])
 ##################################################### FILE OUTPUTS #####################################################
 
 fileName = pd.ExcelWriter(save_Loc, engine = 'xlsxwriter')
