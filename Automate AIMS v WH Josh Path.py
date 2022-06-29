@@ -5,9 +5,9 @@
 
 import pandas as pd
 import numpy as np
-import xlrd
-import openpyxl
-import xlsxwriter
+#import xlrd
+#import openpyxl
+#import xlsxwriter
 
 
 ######################################################## PATHS #########################################################
