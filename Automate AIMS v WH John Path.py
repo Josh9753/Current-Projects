@@ -1,9 +1,10 @@
 # Authors: John Ayres
-# Desc: Script to compare AIMS system INV to Warehouse self-reported INV, and institute Fail conditions, flag fails
+# Desc: Script to compare AIMS system INV to Warehouse self-reported INV, institute Fail conditions, flag fails
 # PARAM: WH ACTUALS xls, WH AIMS.xls
 # OUT:Single XLSX file containing tabs for AIMS vs ACTUALS, and fails summary tab, which contains all failed Styles
 
 import pandas as pd
+import numpy as np
 import xlrd
 import openpyxl
 import xlsxwriter
@@ -97,11 +98,18 @@ sv_AIMS_master['WH Qty Info'] = sv_AIMS_master['WH Qty Info'].astype(float)
 on_AIMS_master['Diff'] = on_AIMS_master["unit"] - on_AIMS_master["WH Qty Info"]
 sv_AIMS_master['Diff'] = sv_AIMS_master["unit"] - sv_AIMS_master["WH Qty Info"]
 
-# Qty Close
-#if abs(on_AIMS_master['Diff']) >= 10:
-#    on_AIMS_master['Qty Close'] = "Fail"
-#else:
-#    on_AIMS_master['Qty_Close'] = "OK"
+
+# Data type conversion
+on_AIMS_master['Diff'] = on_AIMS_master['Diff'].astype(float)
+on_AIMS_master['Diff'] = on_AIMS_master['Diff'].abs()
+
+# Create Fail Col
+conditions =[(on_AIMS_master['Diff']>=10),(on_AIMS_master['Diff']<10)]
+values = ['Fail','Pass']
+on_AIMS_master['Qty Close'] = np.select(conditions,values)
+conditions =[(sv_AIMS_master['Diff']>=10),(sv_AIMS_master['Diff']<10)]
+values = ['Fail','Pass']
+sv_AIMS_master['Qty Close'] = np.select(conditions,values)
 
 ##################################################### FILE OUTPUTS #####################################################
 
