@@ -1,6 +1,10 @@
 # Authors: John Ayres, Joshua Kemperman
+# Desc: Script to process INV/Sales by WH, and Summary containing all INV/Sales. BUILD STABLE
+# PARAM: Input files as listed under pathing; Warehouse INV/OHS by data group and INV Report
+# OUTPUT: Multipage excel Document, listing total INV/OHS by warehouse, Sheets containing totals of INV/OHS
 
 import pandas as pd
+
 
 ######################################################## PATHS ########################################################
 si7_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-SI.csv'
@@ -23,47 +27,42 @@ iv_rep = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\05 - I
 save_Loc = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\US, CA WHSE Sales and OH 06.23.22.xlsx'
 
 
-
-
 ################################################## CREATE DATA FRAMES ##################################################
 
 si7=pd.read_csv(si7_p)
 si13=pd.read_csv(si13_p)
 frame = [si7, si13]
-si_sales_master = pd.concat(frame)
+si_sales_master = pd.concat(frame,ignore_index=True)
 
 on7=pd.read_csv(on7_p)
 on13=pd.read_csv(on13_p)
 frame=[on7, on13]
-on_sales_master = pd.concat(frame)
+on_sales_master = pd.concat(frame,ignore_index=True)
 
 sv7=pd.read_csv(sv7_p)
 sv13=pd.read_csv(sv13_p)
 frame = [sv7, sv13]
-sv_sales_master = pd.concat(frame)
+sv_sales_master = pd.concat(frame,ignore_index=True)
 
-si7_inv=pd.read_excel(si7_inv_p)
-si13_inv=pd.read_excel(si13_inv_p)
-on7_inv=pd.read_excel(on7_inv_p)
-on13_inv=pd.read_excel(on13_inv_p)
-sv7_inv=pd.read_excel(sv7_inv_p)
-sv13_inv=pd.read_excel(sv13_inv_p)
+si7_inv=pd.read_excel(si7_inv_p,engine= 'xlrd')
+si13_inv=pd.read_excel(si13_inv_p,engine= 'xlrd')
+on7_inv=pd.read_excel(on7_inv_p,engine= 'xlrd')
+on13_inv=pd.read_excel(on13_inv_p,engine= 'xlrd')
+sv7_inv=pd.read_excel(sv7_inv_p,engine= 'xlrd')
+sv13_inv=pd.read_excel(sv13_inv_p,engine= 'xlrd')
 
 frame = [si7_inv, si13_inv]
-si_inv_master = pd.concat(frame)
+si_inv_master = pd.concat(frame,ignore_index=True)
 
 frame = [on7_inv, on13_inv]
-on_inv_master = pd.concat(frame)
+on_inv_master = pd.concat(frame,ignore_index=True)
 
 frame = [sv7_inv, sv13_inv]
-sv_inv_master = pd.concat(frame)
+sv_inv_master = pd.concat(frame,ignore_index=True)
 
 inv_rep =pd.read_excel(iv_rep,header=2)
 
-
-
-
-############################################### Changes ####################################################
+##################################################### Changes ##########################################################
 
 # Creating Month Col
 si_sales_master['invdate'] = pd.to_datetime(si_sales_master['invdate'])
@@ -123,21 +122,20 @@ on_inv_master = on_inv_master[['WH','style','grp','desc','color','division','cub
 sv_inv_master = sv_inv_master[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','unit',
                                'caseqty', 'cubic']]
 
-
-
+#data type manip
+si_sales_master['WH'] = si_sales_master['WH'].astype(str)
+si_sales_master['Month'] = si_sales_master['Month'].astype(float)
+si_sales_master['amount'] = si_sales_master['amount'].astype(float)
 
 ################################################### Creating Master sheets #############################################
 frame = [si_sales_master,on_sales_master,sv_sales_master]
-sales_master = pd.concat(frame)
+sales_master = pd.concat(frame,ignore_index=True)
 
 frame = [si_inv_master,on_inv_master,sv_inv_master]
-inv_master = pd.concat(frame)
-
-
+inv_master = pd.concat(frame,ignore_index=True)
 
 
 ####################################################### Changes ########################################################
-
 # VLOOKUP SIM
 sales_master["ID"] = sales_master["style"]+sales_master["color"]
 
@@ -155,13 +153,13 @@ sales_master['CRTN CBM'] =round(sales_master['CRTN CBM'],4)
 #### Summary sheets
 #Sales by wh by month
 
-sales_month = pd.DataFrame()
+#sales_month = pd.DataFrame()
+#sales_month_master = pd.DataFrame()
 
-# if sales_master['WH'] == 'on':
-#     if sales_master['Month'] == '01':
-#         sales_month[0,'ON'] = sum(sales_master['amount'])
-sales_month['ON'] = sales_master.groupby('WH'=='on','Month'=='01')['amount'].sum()
-print(sales_month['ON'])
+#sales_month = sales_master[sales_master.WH =='ON']
+#sales_month = sales_month[['WH','Month','amount']]
+#sales_month_on_01 =sales_month[sales_month.Month =='01']
+#sales_month_master[1,0] = sum(sales_month_on_01['amount'])
 ##################################################### FILE OUTPUTS #####################################################
 
 fileName = pd.ExcelWriter(save_Loc, engine = 'xlsxwriter')
@@ -180,6 +178,9 @@ sv_inv_master.to_excel(fileName, sheet_name='SV INV', index = False)
 sales_master.to_excel(fileName, sheet_name='Total Sales', index = False)
 inv_master.to_excel(fileName, sheet_name='Total INV', index = False)
 
-sales_month.to_excel(fileName, sheet_name='Sales Table', index = False)
+#sales_month.to_excel(fileName, sheet_name='Sales Table', index = False)
+#sales_month_on_01.to_excel(fileName, sheet_name='Sales on01', index = False)
+#sales_month_master.to_excel(fileName, sheet_name='Sales master', index = False)
 
 fileName.save()
+
