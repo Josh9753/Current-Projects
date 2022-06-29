@@ -32,10 +32,10 @@ sv7_inv = pd.read_excel(sv7_inv_p,engine= 'xlrd')
 sv13_inv = pd.read_excel(sv13_inv_p,engine= 'xlrd')
 
 frame = [on7_inv, on13_inv]
-on_AIMS = pd.concat(frame)
+on_AIMS = pd.concat(frame,ignore_index=True)
 
 frame = [sv7_inv, sv13_inv]
-sv_AIMS = pd.concat(frame)
+sv_AIMS = pd.concat(frame,ignore_index=True)
 
 on_ACTUAL = pd.read_excel(on_A_p,engine= 'openpyxl')
 sv_ACTUAL = pd.read_excel(sv_A_p,engine= 'openpyxl')
