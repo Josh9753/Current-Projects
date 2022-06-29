@@ -17,8 +17,8 @@ on13_inv_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39
 sv7_inv_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-SV-Inv.xls'
 sv13_inv_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13-SV-Inv.xls'
 
-on_A_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\01 - AIMS RAW DATA\Automating reports\Inventory ON.xlsx'
-sv_A_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\01 - AIMS RAW DATA\Automating reports\Inventory SV.xlsx'
+on_A_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory ON.xlsx'
+sv_A_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory ON.xlsx'
 
 #### Output: Change Date to Today!!!!!!!!!!!!!!!
 save_Loc = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock 06.29.22.xlsx'
