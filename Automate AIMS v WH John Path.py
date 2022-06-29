@@ -21,7 +21,7 @@ on_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\01 - AIMS RA
 sv_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\01 - AIMS RAW DATA\Automating reports\Inventory SV.xlsx'
 
 #### Output: Change Date to Today!!!!!!!!!!!!!!!
-save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock 06.28.22.xlsx'
+save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock 06.29.22.xlsx'
 
 
 ################################################## CREATE DATA FRAMES ##################################################
@@ -102,7 +102,8 @@ sv_AIMS_master['Diff'] = sv_AIMS_master["unit"] - sv_AIMS_master["WH Qty Info"]
 # Data type conversion
 on_AIMS_master['Diff'] = on_AIMS_master['Diff'].astype(float)
 on_AIMS_master['Diff'] = on_AIMS_master['Diff'].abs()
-
+sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].astype(float)
+sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].abs()
 # Create Fail Col
 conditions =[(on_AIMS_master['Diff']>=10),(on_AIMS_master['Diff']<10)]
 values = ['Fail','Pass']
@@ -110,6 +111,21 @@ on_AIMS_master['Qty Close'] = np.select(conditions,values)
 conditions =[(sv_AIMS_master['Diff']>=10),(sv_AIMS_master['Diff']<10)]
 values = ['Fail','Pass']
 sv_AIMS_master['Qty Close'] = np.select(conditions,values)
+
+# creating  Fails summ
+frame = [on_AIMS_master,sv_AIMS_master]
+fail_sum = pd.concat(frame,ignore_index=True)
+fail_sum = fail_sum.drop(fail_sum[fail_sum['Qty Close']=='Pass'].index)
+
+# Cleaning Fails Sum
+fail_sum = fail_sum[['Sty_Color','WH','unit','WH Qty Info','Diff']]
+fail_sum['Style & Color'] = fail_sum['Sty_Color']
+del fail_sum['Sty_Color']
+fail_sum['AIMS Stock'] = fail_sum['unit']
+del fail_sum['unit']
+fail_sum['Difference'] = fail_sum['Diff']
+del fail_sum['Diff']
+fail_sum = fail_sum[['Style & Color','WH','AIMS Stock','WH Qty Info','Difference']]
 
 ##################################################### FILE OUTPUTS #####################################################
 
@@ -123,4 +139,6 @@ sv_AIMS_master.to_excel(fileName, sheet_name='SV AIMS Inv', index = False)
 on_ACTUAL.to_excel(fileName, sheet_name='ON WH INV', index = False)
 sv_ACTUAL.to_excel(fileName, sheet_name='SV WH INV', index = False)
 
+#SUMM OUT
+fail_sum.to_excel(fileName, sheet_name='Fail Sum', index = False)
 fileName.save()
