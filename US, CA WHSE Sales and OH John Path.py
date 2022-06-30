@@ -169,7 +169,7 @@ sales_master["ID"] = sales_master["style"]+sales_master["color"]
 
 inv_rep = inv_rep[['ID','CRTN CBM','Casepack']]
 
-sales_master = pd.merge(sales_master,inv_rep,on='ID',how='inner')
+sales_master = pd.merge(sales_master,inv_rep,on='ID',how='left')
 
 inv_master = inv_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack','unit',
                                'caseqty', 'cubic']]
