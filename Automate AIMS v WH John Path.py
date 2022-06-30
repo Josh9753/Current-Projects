@@ -32,10 +32,10 @@ sv7_inv = pd.read_excel(sv7_inv_p,engine= 'xlrd')
 sv13_inv = pd.read_excel(sv13_inv_p,engine= 'xlrd')
 
 frame = [on7_inv, on13_inv]
-on_AIMS = pd.concat(frame,ignore_index=True)
+on_AIMS = pd.concat(frame)#,ignore_index=True
 
 frame = [sv7_inv, sv13_inv]
-sv_AIMS = pd.concat(frame,ignore_index=True)
+sv_AIMS = pd.concat(frame)#,ignore_index=True
 
 on_ACTUAL = pd.read_excel(on_A_p,engine= 'openpyxl')
 sv_ACTUAL = pd.read_excel(sv_A_p,engine= 'openpyxl')
@@ -76,8 +76,8 @@ on_AIMS["Sty_Color"] = on_AIMS["style"] + "_" + on_AIMS["color"]
 sv_AIMS["Sty_Color"] = sv_AIMS["style"] + "_" + sv_AIMS["color"]
 
 # Creating WH QTY INFO COL
-on_AIMS_master =  pd.merge(on_AIMS,on_ACTUAL,on='Sty_Color',how='inner')
-sv_AIMS_master =  pd.merge(sv_AIMS,sv_ACTUAL,on='Sty_Color',how='inner')
+on_AIMS_master =  pd.merge(on_AIMS,on_ACTUAL,on='Sty_Color',how='left')
+sv_AIMS_master =  pd.merge(sv_AIMS,sv_ACTUAL,on='Sty_Color',how='left')
 
 #rename
 on_AIMS_master['WH Qty Info'] = on_AIMS_master['Available']
@@ -85,10 +85,27 @@ del on_AIMS_master['Available']
 sv_AIMS_master['WH Qty Info'] = sv_AIMS_master['Available']
 del sv_AIMS_master['Available']
 
-on_AIMS_master = on_AIMS_master[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','unit',
+on_AIMS_master['description'] = on_AIMS_master['desc']
+del on_AIMS_master['desc']
+sv_AIMS_master['description'] = sv_AIMS_master['desc']
+del sv_AIMS_master['desc']
+
+on_AIMS_master['group'] = on_AIMS_master['grp']
+del on_AIMS_master['grp']
+sv_AIMS_master['group'] = sv_AIMS_master['grp']
+del sv_AIMS_master['grp']
+
+on_ACTUAL['Description'] = on_ACTUAL['Descr']
+del on_ACTUAL['Descr']
+sv_ACTUAL['Description'] = sv_ACTUAL['Descr']
+del sv_ACTUAL['Descr']
+
+on_AIMS_master = on_AIMS_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack','unit',
                                'caseqty', 'cubic', 'Sty_Color','WH Qty Info']]
-sv_AIMS_master = sv_AIMS_master[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','unit',
+sv_AIMS_master = sv_AIMS_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack','unit',
                                'caseqty', 'cubic', 'Sty_Color','WH Qty Info']]
+
+
 
 on_AIMS_master['unit'] = on_AIMS_master['unit'].astype(float)
 sv_AIMS_master['unit'] = sv_AIMS_master['unit'].astype(float)
@@ -105,12 +122,12 @@ on_AIMS_master['Diff'] = on_AIMS_master['Diff'].abs()
 sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].astype(float)
 sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].abs()
 # Create Fail Col
-conditions =[(on_AIMS_master['Diff']>=10),(on_AIMS_master['Diff']<10)]
-values = ['Fail','Pass']
-on_AIMS_master['Qty Close'] = np.select(conditions,values)
-conditions =[(sv_AIMS_master['Diff']>=10),(sv_AIMS_master['Diff']<10)]
-values = ['Fail','Pass']
-sv_AIMS_master['Qty Close'] = np.select(conditions,values)
+conditions =[(on_AIMS_master['Diff']>=10),(on_AIMS_master['Diff']<10),(on_AIMS_master['Diff'] == None)]
+values = ['Fail','Pass','null']
+on_AIMS_master['Qty Close'] = np.select(conditions,values,default = None)
+conditions =[(sv_AIMS_master['Diff']>=10),(sv_AIMS_master['Diff']<10),(sv_AIMS_master['Diff'] == None)]
+values = ['Fail','Pass','null']
+sv_AIMS_master['Qty Close'] = np.select(conditions,values,default = None)
 
 # creating  Fails summ
 frame = [on_AIMS_master,sv_AIMS_master]
