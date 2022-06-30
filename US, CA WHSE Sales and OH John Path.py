@@ -499,13 +499,27 @@ cbm_month_master['Grand Total'] = list
 ############################################### Creating CBF by WH by mth ##############################################
 cbf_month_master = pd.DataFrame()
 #cbf_month_master = cbm_month_master.astype(float)
+cbf_month_master['Month'] = cbm_month_master['Month']
 cbf_month_master['ON'] = cbm_month_master['ON'] * 35.3146667
 cbf_month_master['SI'] = cbm_month_master['SI'] * 35.3146667
 cbf_month_master['SV'] = cbm_month_master['SV'] * 35.3146667
 cbf_month_master['Grand Total'] = cbm_month_master['Grand Total'] * 35.3146667
 
+############################################### Creating Unit by WH Total ##############################################
 
+unit_tot_on = sum(on_inv_master['unit'])
+unit_tot_si = sum(si_inv_master['unit'])
+unit_tot_sv = sum(sv_inv_master['unit'])
+unit_tot_tot = unit_tot_on+unit_tot_si+unit_tot_sv
+unit_tot = pd.DataFrame({'': ["Sum of Unit"],'ON': [unit_tot_on],'SI': [unit_tot_si],'SV': [unit_tot_sv],'GrandTotal': [unit_tot_tot]})
 
+############################################## Creating Cubic by WH Total ##############################################
+
+cube_tot_on = sum(on_inv_master['cubic'])
+cube_tot_si = sum(si_inv_master['cubic'])
+cube_tot_sv = sum(sv_inv_master['cubic'])
+cube_tot_tot = cube_tot_on+cube_tot_si+cube_tot_sv
+cube_tot = pd.DataFrame({'': ["Sum of Cubic"],'ON': [cube_tot_on],'SI': [cube_tot_si],'SV': [cube_tot_sv],'GrandTotal': [cube_tot_tot]})
 ##################################################### FILE OUTPUTS #####################################################
 
 fileName = pd.ExcelWriter(save_Loc, engine = 'xlsxwriter')
@@ -528,5 +542,8 @@ sales_month_master.to_excel(fileName, sheet_name='Sales by WH by Month', index =
 unit_month_master.to_excel(fileName, sheet_name='Units by WH by Month', index = False)
 cbm_month_master.to_excel(fileName, sheet_name='CBM by WH by Month', index = False)
 cbf_month_master.to_excel(fileName, sheet_name='CBF by WH by Month', index = False)
+
+unit_tot.to_excel(fileName, sheet_name='unit totals', index = False)
+cube_tot.to_excel(fileName, sheet_name='cubic totals', index = False)
 
 fileName.save()
