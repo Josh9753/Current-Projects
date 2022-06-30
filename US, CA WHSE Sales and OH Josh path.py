@@ -1,3 +1,6 @@
+# Authors: John Ayres
+# Desc: Script to compare AIMS system INV to Warehouse self-reported INV, institute Fail conditions, flag fails
+# PARAM: WH ACTUALS xls, WH AIMS.xls
 # Authors: John Ayres, Joshua Kemperman
 # Desc: Script to process INV/Sales by WH, and Summary containing all INV/Sales JOHN PATH IN PROGRESS, ADDING FUNCTIONALITY
 # PARAM: Input files as listed under pathing; Warehouse INV/OHS by data group and INV Report
@@ -68,11 +71,11 @@ inv_rep = pd.read_excel(iv_rep,header=2)
 
 # Creating Month Col
 si_sales_master['invdate'] = pd.to_datetime(si_sales_master['invdate'])
-si_sales_master['Month'] = si_sales_master['invdate'].dt.strftime('%m')
+si_sales_master['month'] = si_sales_master['invdate'].dt.strftime('%m')
 on_sales_master['invdate'] = pd.to_datetime(on_sales_master['invdate'])
-on_sales_master['Month'] = on_sales_master['invdate'].dt.strftime('%m')
+on_sales_master['month'] = on_sales_master['invdate'].dt.strftime('%m')
 sv_sales_master['invdate'] = pd.to_datetime(sv_sales_master['invdate'])
-sv_sales_master['Month'] = sv_sales_master['invdate'].dt.strftime('%m')
+sv_sales_master['month'] = sv_sales_master['invdate'].dt.strftime('%m')
 
 # Creating WH col
 si_sales_master["WH"] = 'SI'
@@ -83,7 +86,7 @@ si_inv_master["WH"] = 'SI'
 on_inv_master["WH"] = 'ON'
 sv_inv_master["WH"] = 'SV'
 
-# Rename units case cubic
+# Rename units case cubic name group description
 si_inv_master['unit']=si_inv_master['si']
 del si_inv_master['si']
 on_inv_master['unit']=on_inv_master['on']
@@ -105,23 +108,50 @@ del on_inv_master['on_cubic']
 sv_inv_master['cubic']=sv_inv_master['sv_cubic']
 del sv_inv_master['sv_cubic']
 
+si_sales_master['customer']=si_sales_master['name']
+on_sales_master['customer']=on_sales_master['name']
+sv_sales_master['customer']=sv_sales_master['name']
+del sv_sales_master['name']
+del si_sales_master['name']
+del on_sales_master['name']
+
+si_sales_master['description']=si_sales_master['desc']
+on_sales_master['description']=on_sales_master['desc']
+sv_sales_master['description']=sv_sales_master['desc']
+del sv_sales_master['desc']
+del si_sales_master['desc']
+del on_sales_master['desc']
+
+si_inv_master['description']=si_inv_master['desc']
+on_inv_master['description']=on_inv_master['desc']
+sv_inv_master['description']=sv_inv_master['desc']
+del sv_inv_master['desc']
+del si_inv_master['desc']
+del on_inv_master['desc']
+
+si_inv_master['group']=si_inv_master['grp']
+on_inv_master['group']=on_inv_master['grp']
+sv_inv_master['group']=sv_inv_master['grp']
+del sv_inv_master['grp']
+del si_inv_master['grp']
+del on_inv_master['grp']
 
 # Col Reorg
-si_sales_master = si_sales_master[['WH','Month','division','linecode','style','color','desc','catcode','upcno','shptot',
-                                   'price','amount','cost','account','name','custpo','invoice','invdate','order',
+si_sales_master = si_sales_master[['WH','month','division','linecode','style','color','description','catcode','upcno','shptot',
+                                   'price','amount','cost','account','customer','custpo','invoice','invdate','order',
                                    'entered','edifile','note1','ststate','stzip','piktkt','piktktdate']]
-on_sales_master = on_sales_master[['WH','Month','division','linecode','style','color','desc','catcode','upcno','shptot',
-                                   'price','amount','cost','account','name','custpo','invoice','invdate','order',
+on_sales_master = on_sales_master[['WH','month','division','linecode','style','color','description','catcode','upcno','shptot',
+                                   'price','amount','cost','account','customer','custpo','invoice','invdate','order',
                                    'entered','edifile','note1','ststate','stzip','piktkt','piktktdate']]
-sv_sales_master = sv_sales_master[['WH','Month','division','linecode','style','color','desc','catcode','upcno','shptot',
-                                   'price','amount','cost','account','name','custpo','invoice','invdate','order',
+sv_sales_master = sv_sales_master[['WH','month','division','linecode','style','color','description','catcode','upcno','shptot',
+                                   'price','amount','cost','account','customer','custpo','invoice','invdate','order',
                                    'entered','edifile','note1','ststate','stzip','piktkt','piktktdate']]
 
-si_inv_master = si_inv_master[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','unit',
+si_inv_master = si_inv_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack','unit',
                                'caseqty', 'cubic']]
-on_inv_master = on_inv_master[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','unit',
+on_inv_master = on_inv_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack','unit',
                                'caseqty', 'cubic']]
-sv_inv_master = sv_inv_master[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','unit',
+sv_inv_master = sv_inv_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack','unit',
                                'caseqty', 'cubic']]
 
 #data type manip
@@ -144,7 +174,7 @@ inv_rep = inv_rep[['ID','CRTN CBM','Casepack']]
 
 sales_master = pd.merge(sales_master,inv_rep,on='ID',how='inner')
 
-inv_master = inv_master[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','unit',
+inv_master = inv_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack','unit',
                                'caseqty', 'cubic']]
 
 # Rounding
@@ -156,33 +186,33 @@ sales_master['CRTN CBM'] = round(sales_master['CRTN CBM'],4)
 
 sales_month = pd.DataFrame()
 list = ['01','02','03','04','05','06','07','08','09','10','11','12','']
-sales_month_master = pd.DataFrame(list,columns=['Month'])
+sales_month_master = pd.DataFrame(list,columns=['month'])
 
 sales_month = sales_master[sales_master.WH =='ON']
-sales_month = sales_month[['WH','Month','amount']]
-sales_month_on= sales_month[sales_month.Month =='01']
+sales_month = sales_month[['WH','month','amount']]
+sales_month_on= sales_month[sales_month.month =='01']
+sales_month_on= sales_month[sales_month.month =='02']
+sales_month_on= sales_month[sales_month.month =='03']
+sales_month_on= sales_month[sales_month.month =='04']
+sales_month_on= sales_month[sales_month.month =='05']
+sales_month_on= sales_month[sales_month.month =='06']
+sales_month_on= sales_month[sales_month.month =='07']
+sales_month_on= sales_month[sales_month.month =='08']
+sales_month_on= sales_month[sales_month.month =='09']
+sales_month_on= sales_month[sales_month.month =='10']
+sales_month_on= sales_month[sales_month.month =='11']
+sales_month_on= sales_month[sales_month.month =='12']
 on_01 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='02']
 on_02 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='03']
 on_03 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='04']
 on_04 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='05']
 on_05 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='06']
 on_06 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='07']
 on_07 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='08']
 on_08 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='09']
 on_09 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='10']
 on_10 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='11']
 on_11 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='12']
 on_12 = sum(sales_month_on['amount'])
 
 on_sum = on_01+on_02+on_03+on_04+on_05+on_06+on_07+on_08+on_09+on_10+on_11+on_12
@@ -190,30 +220,30 @@ list = [on_01,on_02,on_03,on_04,on_05,on_06,on_07,on_08,on_09,on_10,on_11,on_12,
 sales_month_master['ON'] = list
 
 sales_month = sales_master[sales_master.WH =='SI']
-sales_month = sales_month[['WH','Month','amount']]
-sales_month_on= sales_month[sales_month.Month =='01']
+sales_month = sales_month[['WH','month','amount']]
+sales_month_on= sales_month[sales_month.month =='01']
+sales_month_on= sales_month[sales_month.month =='02']
+sales_month_on= sales_month[sales_month.month =='03']
+sales_month_on= sales_month[sales_month.month =='04']
+sales_month_on= sales_month[sales_month.month =='05']
+sales_month_on= sales_month[sales_month.month =='06']
+sales_month_on= sales_month[sales_month.month =='07']
+sales_month_on= sales_month[sales_month.month =='08']
+sales_month_on= sales_month[sales_month.month =='09']
+sales_month_on= sales_month[sales_month.month =='10']
+sales_month_on= sales_month[sales_month.month =='11']
+sales_month_on= sales_month[sales_month.month =='12']
 si_01 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='02']
 si_02 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='03']
 si_03 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='04']
 si_04 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='05']
 si_05 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='06']
 si_06 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='07']
-si_07 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='08']
 si_08 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='09']
+si_07 = sum(sales_month_on['amount'])
 si_09 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='10']
 si_10 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='11']
 si_11 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='12']
 si_12 = sum(sales_month_on['amount'])
 
 si_sum = si_01+si_02+si_03+si_04+si_05+si_06+si_07+si_08+si_09+si_10+si_11+si_12
@@ -221,30 +251,30 @@ list = [si_01,si_02,si_03,si_04,si_05,si_06,si_07,si_08,si_09,si_10,si_11,si_12,
 sales_month_master['SI'] = list
 
 sales_month = sales_master[sales_master.WH =='SV']
-sales_month = sales_month[['WH','Month','amount']]
-sales_month_on= sales_month[sales_month.Month =='01']
+sales_month = sales_month[['WH','month','amount']]
+sales_month_on= sales_month[sales_month.month =='01']
+sales_month_on= sales_month[sales_month.month =='02']
+sales_month_on= sales_month[sales_month.month =='03']
+sales_month_on= sales_month[sales_month.month =='04']
+sales_month_on= sales_month[sales_month.month =='05']
+sales_month_on= sales_month[sales_month.month =='06']
+sales_month_on= sales_month[sales_month.month =='07']
+sales_month_on= sales_month[sales_month.month =='08']
+sales_month_on= sales_month[sales_month.month =='09']
+sales_month_on= sales_month[sales_month.month =='10']
+sales_month_on= sales_month[sales_month.month =='11']
+sales_month_on= sales_month[sales_month.month =='12']
 sv_01 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='02']
 sv_02 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='03']
 sv_03 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='04']
 sv_04 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='05']
 sv_05 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='06']
 sv_06 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='07']
 sv_07 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='08']
 sv_08 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='09']
 sv_09 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='10']
 sv_10 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='11']
 sv_11 = sum(sales_month_on['amount'])
-sales_month_on= sales_month[sales_month.Month =='12']
 sv_12 = sum(sales_month_on['amount'])
 
 sv_sum = sv_01+sv_02+sv_03+sv_04+sv_05+sv_06+sv_07+sv_08+sv_09+sv_10+sv_11+sv_12
@@ -274,30 +304,30 @@ list = ['01','02','03','04','05','06','07','08','09','10','11','12','']
 unit_month_master = pd.DataFrame(list,columns=['Month'])
 
 unit_month = sales_master[sales_master.WH =='ON']
-unit_month = unit_month[['WH','Month','shptot']]
-unit_month_on= unit_month[unit_month.Month =='01']
+unit_month = unit_month[['WH','month','shptot']]
+unit_month_on= unit_month[unit_month.month =='01']
+unit_month_on= unit_month[unit_month.month =='02']
+unit_month_on= unit_month[unit_month.month =='03']
+unit_month_on= unit_month[unit_month.month =='04']
+unit_month_on= unit_month[unit_month.month =='05']
+unit_month_on= unit_month[unit_month.month =='06']
+unit_month_on= unit_month[unit_month.month =='07']
+unit_month_on= unit_month[unit_month.month =='08']
+unit_month_on= unit_month[unit_month.month =='09']
+unit_month_on= unit_month[unit_month.month =='10']
+unit_month_on= unit_month[unit_month.month =='11']
+unit_month_on= unit_month[unit_month.month =='12']
 on_01 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='02']
 on_02 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='03']
 on_03 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='04']
 on_04 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='05']
 on_05 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='06']
 on_06 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='07']
 on_07 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='08']
 on_08 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='09']
 on_09 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='10']
 on_10 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='11']
 on_11 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='12']
 on_12 = sum(unit_month_on['shptot'])
 
 on_sum = on_01+on_02+on_03+on_04+on_05+on_06+on_07+on_08+on_09+on_10+on_11+on_12
@@ -305,30 +335,30 @@ list = [on_01,on_02,on_03,on_04,on_05,on_06,on_07,on_08,on_09,on_10,on_11,on_12,
 unit_month_master['ON'] = list
 
 unit_month = sales_master[sales_master.WH =='SI']
-unit_month = unit_month[['WH','Month','shptot']]
-unit_month_on= unit_month[unit_month.Month =='01']
+unit_month = unit_month[['WH','month','shptot']]
+unit_month_on= unit_month[unit_month.month =='01']
+unit_month_on= unit_month[unit_month.month =='02']
+unit_month_on= unit_month[unit_month.month =='03']
+unit_month_on= unit_month[unit_month.month =='04']
+unit_month_on= unit_month[unit_month.month =='05']
+unit_month_on= unit_month[unit_month.month =='06']
+unit_month_on= unit_month[unit_month.month =='07']
+unit_month_on= unit_month[unit_month.month =='08']
+unit_month_on= unit_month[unit_month.month =='09']
+unit_month_on= unit_month[unit_month.month =='10']
+unit_month_on= unit_month[unit_month.month =='11']
+unit_month_on= unit_month[unit_month.month =='12']
 si_01 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='02']
 si_02 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='03']
 si_03 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='04']
 si_04 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='05']
 si_05 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='06']
 si_06 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='07']
 si_07 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='08']
 si_08 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='09']
 si_09 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='10']
 si_10 = sum(unit_month_on['shptot'])
-sales_month_on= unit_month[unit_month.Month =='11']
 si_11 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='12']
 si_12 = sum(unit_month_on['shptot'])
 
 si_sum = si_01+si_02+si_03+si_04+si_05+si_06+si_07+si_08+si_09+si_10+si_11+si_12
@@ -336,30 +366,30 @@ list = [si_01,si_02,si_03,si_04,si_05,si_06,si_07,si_08,si_09,si_10,si_11,si_12,
 unit_month_master['SI'] = list
 
 unit_month = sales_master[sales_master.WH =='SV']
-unit_month = unit_month[['WH','Month','shptot']]
-unit_month_on= unit_month[unit_month.Month =='01']
+unit_month = unit_month[['WH','month','shptot']]
+unit_month_on= unit_month[unit_month.month =='01']
+unit_month_on= unit_month[unit_month.month =='02']
+unit_month_on= unit_month[unit_month.month =='03']
+unit_month_on= unit_month[unit_month.month =='04']
+unit_month_on= unit_month[unit_month.month =='05']
+unit_month_on= unit_month[unit_month.month =='06']
+unit_month_on= unit_month[unit_month.month =='07']
+unit_month_on= unit_month[unit_month.month =='08']
+unit_month_on= unit_month[unit_month.month =='09']
+unit_month_on= unit_month[unit_month.month =='10']
+unit_month_on= unit_month[unit_month.month =='11']
+unit_month_on= unit_month[unit_month.month =='12']
 sv_01 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='02']
 sv_02 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='03']
 sv_03 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='04']
 sv_04 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='05']
 sv_05 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='06']
 sv_06 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='07']
 sv_07 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='08']
 sv_08 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='09']
 sv_09 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='10']
 sv_10 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='11']
 sv_11 = sum(unit_month_on['shptot'])
-unit_month_on= unit_month[unit_month.Month =='12']
 sv_12 = sum(unit_month_on['shptot'])
 
 sv_sum = sv_01+sv_02+sv_03+sv_04+sv_05+sv_06+sv_07+sv_08+sv_09+sv_10+sv_11+sv_12
@@ -388,30 +418,30 @@ list = ['01','02','03','04','05','06','07','08','09','10','11','12','']
 cbm_month_master = pd.DataFrame(list,columns=['Month'])
 
 cbm_month = sales_master[sales_master.WH =='ON']
-cbm_month = cbm_month[['WH','Month','Total CBM']]
-cbm_month_on= cbm_month[cbm_month.Month =='01']
+cbm_month = cbm_month[['WH','month','Total CBM']]
+cbm_month_on= cbm_month[cbm_month.month =='01']
+cbm_month_on= cbm_month[cbm_month.month =='02']
+cbm_month_on= cbm_month[cbm_month.month =='03']
+cbm_month_on= cbm_month[cbm_month.month =='04']
+cbm_month_on= cbm_month[cbm_month.month =='05']
+cbm_month_on= cbm_month[cbm_month.month =='06']
+cbm_month_on= cbm_month[cbm_month.month =='07']
+cbm_month_on= cbm_month[cbm_month.month =='08']
+cbm_month_on= cbm_month[cbm_month.month =='09']
+cbm_month_on= cbm_month[cbm_month.month =='10']
+cbm_month_on= cbm_month[cbm_month.month =='11']
+cbm_month_on= cbm_month[cbm_month.month =='12']
 on_01 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='02']
 on_02 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='03']
 on_03 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='04']
 on_04 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='05']
 on_05 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='06']
 on_06 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='07']
 on_07 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='08']
 on_08 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='09']
 on_09 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='10']
 on_10 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='11']
 on_11 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='12']
 on_12 = sum(cbm_month_on['Total CBM'])
 
 on_sum = on_01+on_02+on_03+on_04+on_05+on_06+on_07+on_08+on_09+on_10+on_11+on_12
@@ -419,30 +449,30 @@ list = [on_01,on_02,on_03,on_04,on_05,on_06,on_07,on_08,on_09,on_10,on_11,on_12,
 cbm_month_master['ON'] = list
 
 cbm_month = sales_master[sales_master.WH =='SI']
-cbm_month = cbm_month[['WH','Month','Total CBM']]
-cbm_month_on= cbm_month[cbm_month.Month =='01']
+cbm_month = cbm_month[['WH','month','Total CBM']]
+cbm_month_on= cbm_month[cbm_month.month =='01']
+cbm_month_on= cbm_month[cbm_month.month =='02']
+cbm_month_on= cbm_month[cbm_month.month =='03']
+cbm_month_on= cbm_month[cbm_month.month =='04']
+cbm_month_on= cbm_month[cbm_month.month =='05']
+cbm_month_on= cbm_month[cbm_month.month =='06']
+cbm_month_on= cbm_month[cbm_month.month =='07']
+cbm_month_on= cbm_month[cbm_month.month =='08']
+cbm_month_on= cbm_month[cbm_month.month =='09']
+cbm_month_on= cbm_month[cbm_month.month =='10']
+cbm_month_on= cbm_month[cbm_month.month =='11']
+cbm_month_on= cbm_month[cbm_month.month =='12']
 si_01 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='02']
 si_02 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='03']
 si_03 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='04']
 si_04 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='05']
 si_05 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='06']
 si_06 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='07']
 si_07 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='08']
 si_08 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='09']
 si_09 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='10']
 si_10 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='11']
 si_11 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='12']
 si_12 = sum(cbm_month_on['Total CBM'])
 
 si_sum = si_01+si_02+si_03+si_04+si_05+si_06+si_07+si_08+si_09+si_10+si_11+si_12
@@ -450,30 +480,30 @@ list = [si_01,si_02,si_03,si_04,si_05,si_06,si_07,si_08,si_09,si_10,si_11,si_12,
 cbm_month_master['SI'] = list
 
 cbm_month = sales_master[sales_master.WH =='SV']
-cbm_month =cbm_month[['WH','Month','Total CBM']]
-cbm_month_on= cbm_month[cbm_month.Month =='01']
+cbm_month =cbm_month[['WH','month','Total CBM']]
+cbm_month_on= cbm_month[cbm_month.month =='01']
+cbm_month_on= cbm_month[cbm_month.month =='02']
+cbm_month_on= cbm_month[cbm_month.month =='03']
+cbm_month_on= cbm_month[cbm_month.month =='04']
+cbm_month_on= cbm_month[cbm_month.month =='05']
+cbm_month_on= cbm_month[cbm_month.month =='06']
+cbm_month_on= cbm_month[cbm_month.month =='07']
+cbm_month_on= cbm_month[cbm_month.month =='08']
+cbm_month_on= cbm_month[cbm_month.month =='09']
+cbm_month_on= cbm_month[cbm_month.month =='10']
+cbm_month_on= cbm_month[cbm_month.month =='11']
+cbm_month_on= cbm_month[cbm_month.month =='12']
 sv_01 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='02']
 sv_02 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='03']
 sv_03 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='04']
 sv_04 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='05']
 sv_05 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='06']
 sv_06 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='07']
 sv_07 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='08']
 sv_08 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='09']
 sv_09 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='10']
 sv_10 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='11']
 sv_11 = sum(cbm_month_on['Total CBM'])
-cbm_month_on= cbm_month[cbm_month.Month =='12']
 sv_12 = sum(cbm_month_on['Total CBM'])
 
 sv_sum = sv_01+sv_02+sv_03+sv_04+sv_05+sv_06+sv_07+sv_08+sv_09+sv_10+sv_11+sv_12
