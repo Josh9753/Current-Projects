@@ -9,12 +9,12 @@ import openpyxl
 import xlsxwriter
 
 ######################################################## PATHS #########################################################
-si7_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-SI.csv'
-si13_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-SI.csv'
-on7_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-ON.csv'
-on13_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-ON.csv'
-sv7_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-SV.csv'
-sv13_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-SV.csv'
+si7_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-SI.xls'
+si13_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-SI.xls'
+on7_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-ON.xls'
+on13_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-ON.xls'
+sv7_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-SV.xls'
+sv13_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-SV.xls'
 
 si7_inv_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\7-SI-Inv.xls'
 si13_inv_p = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 Joint Project\Raw Files\13-SI-Inv.xls'
@@ -31,18 +31,18 @@ save_Loc = r'C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\39 J
 
 ################################################## CREATE DATA FRAMES ##################################################
 
-si7 = pd.read_csv(si7_p)
-si13 = pd.read_csv(si13_p)
+si7 = pd.read_excel(si7_p,engine= 'xlrd')
+si13 = pd.read_excel(si13_p,engine= 'xlrd')
 frame = [si7, si13]
 si_sales_master = pd.concat(frame,ignore_index=True)
 
-on7 = pd.read_csv(on7_p)
-on13 = pd.read_csv(on13_p)
+on7 = pd.read_excel(on7_p,engine= 'xlrd')
+on13 = pd.read_excel(on13_p,engine= 'xlrd')
 frame = [on7, on13]
 on_sales_master = pd.concat(frame,ignore_index=True)
 
-sv7 = pd.read_csv(sv7_p)
-sv13 = pd.read_csv(sv13_p)
+sv7 = pd.read_excel(sv7_p,engine= 'xlrd')
+sv13 = pd.read_excel(sv13_p,engine= 'xlrd')
 frame = [sv7, sv13]
 sv_sales_master = pd.concat(frame,ignore_index=True)
 
