@@ -88,24 +88,24 @@ sv_inv_master["WH"] = 'SV'
 
 # Rename units case cubic name group description
 si_inv_master['unit']=si_inv_master['si']
-del si_inv_master['si']
 on_inv_master['unit']=on_inv_master['on']
-del on_inv_master['on']
 sv_inv_master['unit']=sv_inv_master['sv']
+del si_inv_master['si']
+del on_inv_master['on']
 del sv_inv_master['sv']
 
 si_inv_master['caseqty']=si_inv_master['si_caseqty']
-del si_inv_master['si_caseqty']
 on_inv_master['caseqty']=on_inv_master['on_caseqty']
-del on_inv_master['on_caseqty']
 sv_inv_master['caseqty']=sv_inv_master['sv_caseqty']
+del si_inv_master['si_caseqty']
+del on_inv_master['on_caseqty']
 del sv_inv_master['sv_caseqty']
 
 si_inv_master['cubic']=si_inv_master['si_cubic']
-del si_inv_master['si_cubic']
 on_inv_master['cubic']=on_inv_master['on_cubic']
-del on_inv_master['on_cubic']
 sv_inv_master['cubic']=sv_inv_master['sv_cubic']
+del si_inv_master['si_cubic']
+del on_inv_master['on_cubic']
 del sv_inv_master['sv_cubic']
 
 si_sales_master['customer']=si_sales_master['name']
