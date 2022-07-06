@@ -21,7 +21,7 @@ on_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Pro
 sv_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory SV.xlsx'
 
 #### Output: Change Date to Today!!!!!!!!!!!!!!!
-save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock 06.29.22.xlsx'
+save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock 07.06.22..xlsx'
 
 
 ################################################## CREATE DATA FRAMES ##################################################
@@ -105,7 +105,9 @@ on_AIMS_master = on_AIMS_master[['WH','style','group','description','color','div
 sv_AIMS_master = sv_AIMS_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack','unit',
                                'caseqty', 'cubic', 'Sty_Color','WH Qty Info']]
 
-
+#Handling nulls
+on_AIMS_master["WH Qty Info"] = on_AIMS_master["WH Qty Info"].fillna(0)
+sv_AIMS_master["WH Qty Info"] = sv_AIMS_master["WH Qty Info"].fillna(0)
 
 on_AIMS_master['unit'] = on_AIMS_master['unit'].astype(float)
 sv_AIMS_master['unit'] = sv_AIMS_master['unit'].astype(float)
@@ -123,16 +125,18 @@ sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].astype(float)
 sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].abs()
 # Create Fail Col
 conditions =[(on_AIMS_master['Diff']>=10),(on_AIMS_master['Diff']<10),(on_AIMS_master['Diff'] == None)]
-values = ['Fail','Pass','null']
-on_AIMS_master['Qty Close'] = np.select(conditions,values,default = None)
+values = ['Fail','Pass','Pass']
+on_AIMS_master['Qty Close'] = np.select(conditions,values,default = 0)
 conditions =[(sv_AIMS_master['Diff']>=10),(sv_AIMS_master['Diff']<10),(sv_AIMS_master['Diff'] == None)]
-values = ['Fail','Pass','null']
-sv_AIMS_master['Qty Close'] = np.select(conditions,values,default = None)
+values = ['Fail','Pass','Pass']
+sv_AIMS_master['Qty Close'] = np.select(conditions,values,default = 0)
 
 # creating  Fails summ
 frame = [on_AIMS_master,sv_AIMS_master]
 fail_sum = pd.concat(frame,ignore_index=True)
-fail_sum = fail_sum.drop(fail_sum[fail_sum['Qty Close']=='Pass'].index)
+fail_sum = fail_sum.loc[fail_sum['Qty Close']=='Fail']
+#fail_sum = fail_sum.drop(fail_sum[fail_sum['Qty Close']=='Pass'].index)
+#fail_sum = fail_sum.drop(fail_sum[fail_sum['Qty Close']==None].index)
 
 # Cleaning Fails Sum
 fail_sum = fail_sum[['Sty_Color','WH','unit','WH Qty Info','Diff']]
