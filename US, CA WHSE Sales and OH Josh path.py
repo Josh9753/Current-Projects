@@ -169,7 +169,7 @@ sales_master["ID"] = sales_master["style"]+sales_master["color"]
 
 inv_rep = inv_rep[['ID','CRTN CBM','Casepack']]
 
-sales_master = pd.merge(sales_master,inv_rep,on='ID',how='left')
+sales_master = pd.merge(sales_master,inv_rep,on='ID',how='inner')
 
 inv_master = inv_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack','unit',
                                'caseqty', 'cubic']]
@@ -177,6 +177,8 @@ inv_master = inv_master[['WH','style','group','description','color','division','
 # Rounding
 sales_master['Total CBM'] = round((sales_master['CRTN CBM']/sales_master['Casepack'])*sales_master['shptot'],4)
 sales_master['CRTN CBM'] = round(sales_master['CRTN CBM'],4)
+sales_master['Total CBM'] = sales_master['Total CBM'].astype(float)
+
 
 #### Summary sheets
 ########################################### Sales by wh by month #######################################################
@@ -236,8 +238,8 @@ si_03 = sum(sales_month_03['amount'])
 si_04 = sum(sales_month_04['amount'])
 si_05 = sum(sales_month_05['amount'])
 si_06 = sum(sales_month_06['amount'])
-si_08 = sum(sales_month_07['amount'])
-si_07 = sum(sales_month_08['amount'])
+si_07 = sum(sales_month_07['amount'])
+si_08 = sum(sales_month_08['amount'])
 si_09 = sum(sales_month_09['amount'])
 si_10 = sum(sales_month_10['amount'])
 si_11 = sum(sales_month_11['amount'])
@@ -548,6 +550,8 @@ cube_tot_sv = sum(sv_inv_master['cubic'])
 cube_tot_tot = cube_tot_on+cube_tot_si+cube_tot_sv
 cube_tot = pd.DataFrame({'': ["Sum of Cubic"],'ON': [cube_tot_on],'SI': [cube_tot_si],'SV': [cube_tot_sv],'GrandTotal': [cube_tot_tot]})
 ##################################################### FILE OUTPUTS #####################################################
+print(sales_master[sales_master["Total CBM"]==None])
+
 
 fileConstructor = pd.ExcelWriter(save_Loc, engine = 'xlsxwriter')
 
