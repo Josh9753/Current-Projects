@@ -148,6 +148,19 @@ fail_sum['Difference'] = fail_sum['Diff']
 del fail_sum['Diff']
 fail_sum = fail_sum[['Style & Color','WH','AIMS Stock','WH Qty Info','Difference']]
 
+# Cleaning data
+del on_ACTUAL['Sty_Color']
+del sv_ACTUAL['Sty_Color']
+del on_ACTUAL['Code']
+del sv_ACTUAL['Code']
+del on_ACTUAL['NMFC']
+del sv_ACTUAL['NMFC']
+on_ACTUAL = on_ACTUAL[['Customer','Facility','Item','Description','Color','Size','Qty','Available','Case Qty','Length','Height','Width','Weight','Cube Each',
+                       'CFT Each Per Line','Group','Date']]
+sv_ACTUAL = sv_ACTUAL[['Customer','Facility','Item','Description','Color','Size','Qty','Available','Case Qty','Length','Height','Width','Weight','Cube Each',
+                       'CFT Each Per Line','Group','Date']]
+
+
 ##################################################### FILE OUTPUTS #####################################################
 
 fileName = pd.ExcelWriter(save_Loc, engine = 'xlsxwriter')
