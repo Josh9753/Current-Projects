@@ -46,9 +46,9 @@ on_AIMS["WH"] = 'ON'
 sv_AIMS["WH"] = 'SV'
 
 # Rename units case cubic
-on_AIMS['unit']=on_AIMS['on']
+on_AIMS['AIMS Stock']=on_AIMS['on']
 del on_AIMS['on']
-sv_AIMS['unit']=sv_AIMS['sv']
+sv_AIMS['AIMS Stock']=sv_AIMS['sv']
 del sv_AIMS['sv']
 
 on_AIMS['caseqty']=on_AIMS['on_caseqty']
@@ -66,9 +66,9 @@ del on_ACTUAL['Style']
 sv_ACTUAL['Sty_Color'] = sv_ACTUAL['Style']
 del sv_ACTUAL['Style']
 
-on_AIMS = on_AIMS[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','unit',
+on_AIMS = on_AIMS[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','AIMS Stock',
                                'caseqty', 'cubic']]
-sv_AIMS = sv_AIMS[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','unit',
+sv_AIMS = sv_AIMS[['WH','style','grp','desc','color','division','cubic_ft','weight','master_pack','AIMS Stock',
                                'caseqty', 'cubic']]
 
 # Creating Sty_col column
@@ -80,9 +80,9 @@ on_AIMS_master =  pd.merge(on_AIMS,on_ACTUAL,on='Sty_Color',how='left')
 sv_AIMS_master =  pd.merge(sv_AIMS,sv_ACTUAL,on='Sty_Color',how='left')
 
 #rename
-on_AIMS_master['WH Qty Info'] = on_AIMS_master['Available']
+on_AIMS_master['WH Stock'] = on_AIMS_master['Available']
 del on_AIMS_master['Available']
-sv_AIMS_master['WH Qty Info'] = sv_AIMS_master['Available']
+sv_AIMS_master['WH Stock'] = sv_AIMS_master['Available']
 del sv_AIMS_master['Available']
 
 on_AIMS_master['description'] = on_AIMS_master['desc']
@@ -100,22 +100,22 @@ del on_ACTUAL['Descr']
 sv_ACTUAL['Description'] = sv_ACTUAL['Descr']
 del sv_ACTUAL['Descr']
 
-on_AIMS_master = on_AIMS_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack','unit',
-                               'caseqty', 'cubic', 'Sty_Color','WH Qty Info']]
-sv_AIMS_master = sv_AIMS_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack','unit',
-                               'caseqty', 'cubic', 'Sty_Color','WH Qty Info']]
+on_AIMS_master = on_AIMS_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack',
+                               'caseqty', 'cubic', 'Sty_Color','AIMS Stock','WH Stock']]
+sv_AIMS_master = sv_AIMS_master[['WH','style','group','description','color','division','cubic_ft','weight','master_pack',
+                               'caseqty', 'cubic', 'Sty_Color','AIMS Stock','WH Stock']]
 
 #Handling nulls
-on_AIMS_master["WH Qty Info"] = on_AIMS_master["WH Qty Info"].fillna(0)
-sv_AIMS_master["WH Qty Info"] = sv_AIMS_master["WH Qty Info"].fillna(0)
+on_AIMS_master["WH Stock"] = on_AIMS_master["WH Stock"].fillna(0)
+sv_AIMS_master["WH Stock"] = sv_AIMS_master["WH Stock"].fillna(0)
 
-on_AIMS_master['unit'] = on_AIMS_master['unit'].astype(float)
-sv_AIMS_master['unit'] = sv_AIMS_master['unit'].astype(float)
-on_AIMS_master['WH Qty Info'] = on_AIMS_master['WH Qty Info'].astype(float)
-sv_AIMS_master['WH Qty Info'] = sv_AIMS_master['WH Qty Info'].astype(float)
+on_AIMS_master['AIMS Stock'] = on_AIMS_master['AIMS Stock'].astype(float)
+sv_AIMS_master['AIMS Stock'] = sv_AIMS_master['AIMS Stock'].astype(float)
+on_AIMS_master['WH Stock'] = on_AIMS_master['WH Stock'].astype(float)
+sv_AIMS_master['WH Stock'] = sv_AIMS_master['WH Stock'].astype(float)
 # difference col to create fails
-on_AIMS_master['Diff'] = on_AIMS_master["unit"] - on_AIMS_master["WH Qty Info"]
-sv_AIMS_master['Diff'] = sv_AIMS_master["unit"] - sv_AIMS_master["WH Qty Info"]
+on_AIMS_master['Diff'] = on_AIMS_master["AIMS Stock"] - on_AIMS_master["WH Stock"]
+sv_AIMS_master['Diff'] = sv_AIMS_master["AIMS Stock"] - sv_AIMS_master["WH Stock"]
 
 
 # Data type conversion
@@ -139,14 +139,29 @@ fail_sum = fail_sum.loc[fail_sum['Qty Close']=='Fail']
 #fail_sum = fail_sum.drop(fail_sum[fail_sum['Qty Close']==None].index)
 
 # Cleaning Fails Sum
-fail_sum = fail_sum[['Sty_Color','WH','unit','WH Qty Info','Diff']]
+fail_sum = fail_sum[['Sty_Color','WH','AIMS Stock','WH Stock','Diff']]
 fail_sum['Style & Color'] = fail_sum['Sty_Color']
 del fail_sum['Sty_Color']
-fail_sum['AIMS Stock'] = fail_sum['unit']
-del fail_sum['unit']
 fail_sum['Difference'] = fail_sum['Diff']
 del fail_sum['Diff']
-fail_sum = fail_sum[['Style & Color','WH','AIMS Stock','WH Qty Info','Difference']]
+fail_sum = fail_sum[['Style & Color','WH','AIMS Stock','WH Stock','Difference']]
+
+# Cleaning data
+del on_ACTUAL['Sty_Color']
+del sv_ACTUAL['Sty_Color']
+del on_ACTUAL['Code']
+del sv_ACTUAL['Code']
+del on_ACTUAL['NMFC']
+del sv_ACTUAL['NMFC']
+on_ACTUAL['WH Stock'] = on_ACTUAL['Qty']
+del on_ACTUAL['Qty']
+sv_ACTUAL['WH Stock'] = sv_ACTUAL['Qty']
+del sv_ACTUAL['Qty']
+on_ACTUAL = on_ACTUAL[['Customer','Facility','Item','Description','Color','Size','WH Stock','Available','Case Qty','Length','Height','Width','Weight','Cube Each',
+                       'CFT Each Per Line','Group','Date']]
+sv_ACTUAL = sv_ACTUAL[['Customer','Facility','Item','Description','Color','Size','WH Stock','Available','Case Qty','Length','Height','Width','Weight','Cube Each',
+                       'CFT Each Per Line','Group','Date']]
+
 
 ##################################################### FILE OUTPUTS #####################################################
 
