@@ -12,17 +12,19 @@ import numpy as np
 
 ######################################################## PATHS #########################################################
 
-on7_inv_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-ON-Inv.xls'
-on13_inv_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13-ON-Inv.xls'
-sv7_inv_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-SV-Inv.xls'
-sv13_inv_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13-SV-Inv.xls'
+on7_inv_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-ON-Inv.xls'
+on13_inv_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13-ON-Inv.xls'
+sv7_inv_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-SV-Inv.xls'
+sv13_inv_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13-SV-Inv.xls'
 
-on_A_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory ON.xlsx'
-sv_A_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory ON.xlsx'
+on_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory ON.xlsx'
+sv_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory SV.xlsx'
 
 #### Output: Change Date to Today!!!!!!!!!!!!!!!
-save_Loc = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock 06.29.22.xlsx'
+save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock 07.07.22.xlsx'
 
+# Difference Tolerance in units(Fail tolerance)
+tol = 10
 
 ################################################## CREATE DATA FRAMES ##################################################
 
@@ -124,10 +126,10 @@ on_AIMS_master['Diff'] = on_AIMS_master['Diff'].abs()
 sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].astype(float)
 sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].abs()
 # Create Fail Col
-conditions =[(on_AIMS_master['Diff']>=10),(on_AIMS_master['Diff']<10),(on_AIMS_master['Diff'] == None)]
+conditions =[(on_AIMS_master['Diff']>=tol),(on_AIMS_master['Diff']<tol),(on_AIMS_master['Diff'] == None)]
 values = ['Fail','Pass','Pass']
 on_AIMS_master['Qty Close'] = np.select(conditions,values,default = 0)
-conditions =[(sv_AIMS_master['Diff']>=10),(sv_AIMS_master['Diff']<10),(sv_AIMS_master['Diff'] == None)]
+conditions =[(sv_AIMS_master['Diff']>=tol),(sv_AIMS_master['Diff']<tol),(sv_AIMS_master['Diff'] == None)]
 values = ['Fail','Pass','Pass']
 sv_AIMS_master['Qty Close'] = np.select(conditions,values,default = 0)
 
