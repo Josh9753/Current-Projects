@@ -123,6 +123,7 @@ on_AIMS_master['Diff'] = on_AIMS_master['Diff'].abs()
 sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].astype(float)
 sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].abs()
 # Create Fail Col
+
 conditions = [(on_AIMS_master['Diff'] >= tol), (on_AIMS_master['Diff'] < tol), (on_AIMS_master['Diff'] == None)]
 values = ['Fail', 'Pass', 'Pass']
 on_AIMS_master['Qty Close'] = np.select(conditions, values, default=0)
@@ -134,6 +135,7 @@ sv_AIMS_master['Qty Close'] = np.select(conditions, values, default=0)
 frame = [on_AIMS_master, sv_AIMS_master]
 fail_sum = pd.concat(frame, ignore_index=True)
 fail_sum = fail_sum.loc[fail_sum['Qty Close'] == 'Fail']
+
 
 # Cleaning Fails Sum
 fail_sum = fail_sum[['Sty_Color', 'WH', 'AIMS Stock', 'WH Stock', 'Diff']]
