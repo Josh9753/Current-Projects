@@ -550,7 +550,6 @@ cube_tot_sv = sum(sv_inv_master['cubic'])
 cube_tot_tot = cube_tot_on+cube_tot_si+cube_tot_sv
 cube_tot = pd.DataFrame({'': ["Sum of Cubic"],'ON': [cube_tot_on],'SI': [cube_tot_si],'SV': [cube_tot_sv],'GrandTotal': [cube_tot_tot]})
 ##################################################### FILE OUTPUTS #####################################################
-print(sales_master[sales_master["Total CBM"]==None])
 
 
 fileConstructor = pd.ExcelWriter(save_Loc, engine = 'xlsxwriter')
