@@ -20,7 +20,6 @@ sv_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Pro
 #### Output: Change Date to Today!!!!!!!!!!!!!!!
 save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock 07.13.22.xlsx'
 
-
 # Difference Tolerance in units(Fail tolerance)
 tol = 10
 
@@ -100,9 +99,9 @@ del on_ACTUAL['Descr']
 sv_ACTUAL['Description'] = sv_ACTUAL['Descr']
 del sv_ACTUAL['Descr']
 
-on_AIMS_master = on_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight', 
+on_AIMS_master = on_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight',
                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'WH Stock']]
-sv_AIMS_master = sv_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight', 
+sv_AIMS_master = sv_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight',
                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'WH Stock']]
 
 # Handling nulls
@@ -124,7 +123,6 @@ on_AIMS_master['Diff'] = on_AIMS_master['Diff'].abs()
 sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].astype(float)
 sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].abs()
 # Create Fail Col
-
 conditions = [(on_AIMS_master['Diff'] >= tol), (on_AIMS_master['Diff'] < tol), (on_AIMS_master['Diff'] == None)]
 values = ['Fail', 'Pass', 'Pass']
 on_AIMS_master['Qty Close'] = np.select(conditions, values, default=0)
@@ -136,7 +134,6 @@ sv_AIMS_master['Qty Close'] = np.select(conditions, values, default=0)
 frame = [on_AIMS_master, sv_AIMS_master]
 fail_sum = pd.concat(frame, ignore_index=True)
 fail_sum = fail_sum.loc[fail_sum['Qty Close'] == 'Fail']
-
 
 # Cleaning Fails Sum
 fail_sum = fail_sum[['Sty_Color', 'WH', 'AIMS Stock', 'WH Stock', 'Diff']]
@@ -157,10 +154,10 @@ on_ACTUAL['WH Stock'] = on_ACTUAL['Qty']
 del on_ACTUAL['Qty']
 sv_ACTUAL['WH Stock'] = sv_ACTUAL['Qty']
 del sv_ACTUAL['Qty']
-on_ACTUAL = on_ACTUAL[['Customer', 'Facility', 'Item', 'Description', 'Color', 'Size', 'WH Stock', 'Available', 
+on_ACTUAL = on_ACTUAL[['Customer', 'Facility', 'Item', 'Description', 'Color', 'Size', 'WH Stock', 'Available',
                        'Case Qty', 'Length', 'Height', 'Width', 'Weight', 'Cube Each', 'CFT Each Per Line', 'Group',
                        'Date']]
-sv_ACTUAL = sv_ACTUAL[['Customer', 'Facility', 'Item', 'Description', 'Color', 'Size', 'WH Stock', 'Available', 
+sv_ACTUAL = sv_ACTUAL[['Customer', 'Facility', 'Item', 'Description', 'Color', 'Size', 'WH Stock', 'Available',
                        'Case Qty', 'Length', 'Height', 'Width', 'Weight', 'Cube Each', 'CFT Each Per Line', 'Group',
                        'Date']]
 
