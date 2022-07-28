@@ -187,6 +187,12 @@ outlier = pd.concat([outlier, vlig[vlig["Outlier"] == "True"]], ignore_index=Tru
 outlier = pd.concat([outlier, whar[whar["Outlier"] == "True"]], ignore_index=True)
 outlier = pd.concat([outlier, wsco[wsco["Outlier"] == "True"]], ignore_index=True)
 
+
+################################################ Inverse Transformation ################################################
+
+outlier["Ocean Freight Cost"] = np.exp(outlier["Ocean Freight Cost"])
+
+
 ##################################################### FILE OUTPUTS #####################################################
 
 fileName = pd.ExcelWriter(save_Loc, engine='xlsxwriter')
