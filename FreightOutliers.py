@@ -114,17 +114,23 @@ wsco.reset_index(drop=True, inplace=True)
 ################################################## Calculating Fails ###################################################
 
 def zscore(data):
-    mean = np.mean(data.loc[:, "Ocean Freight Cost"])
-    std = np.std(data.loc[:, "Ocean Freight Cost"])
-    count = 0
-    for i in data["Ocean Freight Cost"]:
-        z = (i - mean) / std
-        data.loc[count, "Z-score"] = z
-        if z > threshold:
-            data.loc[count, "Outlier"] = "True"
+    if len(data) == 0:
+        return null
+    else:
+        mean = np.mean(data.loc[:, "Ocean Freight Cost"])
+        std = np.std(data.loc[:, "Ocean Freight Cost"])
+        if std == 0:
+            data.loc[:, "Outlier"] = "False"
         else:
-            data.loc[count, "Outlier"] = "False"
-        count = count + 1
+            count = 0
+            for i in data["Ocean Freight Cost"]:
+                z = (i - mean) / std
+                data.loc[count, "Z-score"] = z
+                if z > threshold:
+                    data.loc[count, "Outlier"] = "True"
+                else:
+                    data.loc[count, "Outlier"] = "False"
+                count = count + 1
 
 
 
