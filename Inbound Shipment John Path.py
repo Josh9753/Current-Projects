@@ -16,20 +16,20 @@ from openpyxl import load_workbook
 
 ###################################################### DATA SOURCES ######################################################
 
-styles_categories = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\1 - STYLES\Master.xlsx"
-categories_reference = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\1 - STYLES\Categories_Master.xlsx"
-sty_files = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\1 - STYLES\* - Style Report.xls"
-bookings = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\13 - BOOKINGS\Bookings Approvals_Master.xlsx"
-opos_files = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\3 - PURCHASE ORDERS\* - PO OR Comp Report.csv"
-fopo_orders = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\3 - PURCHASE ORDERS\* - FPO.xls"
-shi_files = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\4 - SHIPMENTS\* - PO Shipment Report.xls"
-ord_files = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\7 - SALES ORDERS\* - Open Order.csv"
-vh_files = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\6 - FACTORY ORDERS\* - Vendor Purchases Report.csv"
-shipto = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\25 - PO TRACKING\01 - WORKING\ShipTo.csv"
-gc = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\25 - PO TRACKING\Detailed-Tracking.xlsx" 
-mxn = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\25 - PO TRACKING\Mexico Follow Up.xlsx"
-wt = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\25 - PO TRACKING\WebTracker - *.xls"
-cbf = r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\05 - INVENTORY\01 - HISTORICAL\CBF.xlsx"
+styles_categories = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\1 - STYLES\Master.xlsx"
+categories_reference = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\1 - STYLES\Categories_Master.xlsx"
+sty_files = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\1 - STYLES\* - Style Report.xls"
+bookings = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\13 - BOOKINGS\Bookings Approvals_Master.xlsx"
+opos_files = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\3 - PURCHASE ORDERS\* - PO OR Comp Report.csv"
+fopo_orders = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\3 - PURCHASE ORDERS\* - FPO.xls"
+shi_files = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\4 - SHIPMENTS\* - PO Shipment Report.xls"
+ord_files = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\7 - SALES ORDERS\* - Open Order.csv"
+vh_files = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\01 - AIMS RAW DATA\6 - FACTORY ORDERS\* - Vendor Purchases Report.csv"
+shipto = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\25 - PO TRACKING\01 - WORKING\ShipTo.csv"
+gc = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\25 - PO TRACKING\Detailed-Tracking.xlsx" 
+mxn = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\25 - PO TRACKING\Mexico Follow Up.xlsx"
+wt = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\25 - PO TRACKING\WebTracker - *.xls"
+cbf = r"C:\Users\John Ayres\Enchante Living\Planning - Documents\05 - INVENTORY\01 - HISTORICAL\CBF.xlsx"
 
 ######################################################## GET DATA ########################################################
 
@@ -474,10 +474,9 @@ master = master[["Style","Color","PO No","Qty","Ship to Location","AIMS Location
                                
 ################################################### SAVE DATA TO EXCEL ###################################################
 
-writer = pd.ExcelWriter(r"C:\Users\Joshua Kemperman\Enchante Living\Planning - Documents\25 - PO TRACKING\Inbound Shipment Report Working.xlsx", engine = "xlsxwriter")
+writer = pd.ExcelWriter(r"C:\Users\John Ayres\Enchante Living\Planning - Documents\25 - PO TRACKING\Inbound Shipment Report Working.xlsx", engine = "xlsxwriter")
 master.to_excel(writer,"Shipping Master",index=False)
-#wt_data.to_excel(writer,"WT Data",index=False)
 writer.save()
 
-#master.to_csv(r"C:\Users\andre\Enchante Living\Planning - Documents\05 - INVENTORY\Inventory Master_New.csv")
+
 master.head(50)
