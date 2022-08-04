@@ -432,10 +432,8 @@ master = pd.merge(master, wt_data, left_on="bkngid", right_on="bkngid", how="lef
 
 master["Tracking Container No"] = master["Container No"].fillna("NA")
 master.loc[master["Tracking Container No"] == "NA", "Tracking Container No"] = master["Import Container No"]
-# master["Tracking Container No"] = master["Tracking Container No"].replace("NA",master["Import Container No"])
 master["Tracking Container No"] = master["Tracking Container No"].fillna("NA")
 master.loc[master["Tracking Container No"] == "NA", "Tracking Container No"] = master["WT Container(s)"]
-#master["Tracking Container No"] = master["Tracking Container No"].replace("NA", master["WT Container(s)"])
 master["Tracking Container No"] = master["Tracking Container No"].astype("str")
 master["Tracking Container No"] = master["Tracking Container No"].str.replace(",", "")
 master["Tracking Container No"] = master["Tracking Container No"].apply(lambda x: x.split(' ')[0])
@@ -451,33 +449,25 @@ master = master.sort_values(by=["Division", "Category", "ID"], ascending=[True, 
 master["ETD"] = master["WT Port ETD"]
 master["ETD"] = master["ETD"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["Origin Departure Actual Date"]
-#master["ETD"] = master["ETD"].replace("NA", master["Origin Departure Actual Date"])
 master["ETD"] = master["ETD"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["Origin Departure Planned Date (ETD)"]
-#master["ETD"] = master["ETD"].replace("NA", master["Origin Departure Planned Date (ETD)"])
 master["ETD"] = master["ETD"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["Import ETD Port"]
-#master["ETD"] = master["ETD"].replace("NA", master["Import ETD Port"])
 master["ETD"] = master["ETD"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["AIMS ETD Port"]
-#master["ETD"] = master["ETD"].replace("NA", master["AIMS ETD Port"])
+
 master["ETD"] = master["ETD"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["PO Cancel"]
-#master["ETD"] = master["ETD"].replace("NA", master["PO Cancel"])
 
 master["ETA"] = master["WT Port ETA"]
 master["ETA"] = master["ETA"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["Destination Arrival Actual Date"]
-#master["ETA"] = master["ETA"].replace("NA", master["Destination Arrival Actual Date"])
 master["ETA"] = master["ETA"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["Destination Arrival Planned Date (ETA)"]
-#master["ETA"] = master["ETA"].replace("NA", master["Destination Arrival Planned Date (ETA)"])
 master["ETA"] = master["ETA"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["Import ETA Port"]
-#master["ETA"] = master["ETA"].replace("NA", master["Import ETA Port"])
 master["ETA"] = master["ETA"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["AIMS ETA Port"]
-#master["ETA"] = master["ETA"].replace("NA", master["AIMS ETA Port"])
 master["ETA"] = master["ETA"].fillna("NA")
 
 master["Main Customer"] = " "
