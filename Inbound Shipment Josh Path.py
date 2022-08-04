@@ -1,3 +1,10 @@
+"""
+Author: Andrei Asadchy
+Editors: Joshua Kemperman, John Ayres
+Desc: Takes data from DB and converts information to actionable data, describing inbound SHipments, based off accepted bookings
+"""
+
+
 import glob
 import pandas as pd
 import numpy as np
