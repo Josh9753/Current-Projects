@@ -1,16 +1,13 @@
 """
 Author: Andrei Asadchy
 Editors: Joshua Kemperman, John Ayres
-Desc: Takes data from DB and converts information to actionable data, describing inbound SHipments, based off accepted bookings
+Desc: Takes data from DB/Web Tracking and converts information to actionable data, describing inbound Shipments, based off accepted bookings
 """
 
 import glob
 import pandas as pd
 import numpy as np
 import datetime
-import openpyxl
-import math
-from openpyxl import load_workbook
 
 ###################################################### DATA SOURCES ######################################################
 
@@ -258,7 +255,7 @@ wtcl = wtcl.explode("Order Ref#")
 wtcl["Order Ref#"] = wtcl["Order Ref#"].str.replace(",", "")
 wtcl = wtcl.rename(index=str,
                    columns={"Order Ref#": "PO No", "Containers": "WT Container(s)", "Shipment#": "Booking No",
-                            "ETD": "WT Port ETD", "ETA": "WT Port ETA"})
+                            "ETD": "WT Port ETD", "ETA": "WT Port ETA"})#
 wtcl["bkngid"] = wtcl["PO No"].fillna(0).astype("str")  # + wtcl["Booking No"].fillna(0).astype("str") #id by PO only
 # wtcl["bkngid"] = wtcl["PO No"].fillna(0).astype("str") + wtcl["Booking No"].fillna(0).astype("str")
 wt_data = wtcl[["bkngid", "WT Container(s)", "WT Port ETD", "WT Port ETA"]]
@@ -455,19 +452,18 @@ master["ETD"] = master["ETD"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["Import ETD Port"]
 master["ETD"] = master["ETD"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["AIMS ETD Port"]
-
 master["ETD"] = master["ETD"].fillna("NA")
 master.loc[master["ETD"] == "NA", "ETD"] = master["PO Cancel"]
 
 master["ETA"] = master["WT Port ETA"]
 master["ETA"] = master["ETA"].fillna("NA")
-master.loc[master["ETD"] == "NA", "ETD"] = master["Destination Arrival Actual Date"]
+master.loc[master["ETA"] == "NA", "ETA"] = master["Destination Arrival Actual Date"]
 master["ETA"] = master["ETA"].fillna("NA")
-master.loc[master["ETD"] == "NA", "ETD"] = master["Destination Arrival Planned Date (ETA)"]
+master.loc[master["ETA"] == "NA", "ETA"] = master["Destination Arrival Planned Date (ETA)"]
 master["ETA"] = master["ETA"].fillna("NA")
-master.loc[master["ETD"] == "NA", "ETD"] = master["Import ETA Port"]
+master.loc[master["ETA"] == "NA", "ETA"] = master["Import ETA Port"]
 master["ETA"] = master["ETA"].fillna("NA")
-master.loc[master["ETD"] == "NA", "ETD"] = master["AIMS ETA Port"]
+master.loc[master["ETA"] == "NA", "ETA"] = master["AIMS ETA Port"]
 master["ETA"] = master["ETA"].fillna("NA")
 
 master["Main Customer"] = " "
