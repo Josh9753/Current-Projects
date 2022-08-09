@@ -113,303 +113,54 @@ wsco.reset_index(drop=True, inplace=True)
 
 ################################################## Calculating Fails ###################################################
 
-mean = np.mean(basi.loc[:, "Ocean Freight Cost"])
-std = np.std(basi.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in basi["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    basi.loc[count, "Z-score"] = z
-    if z > threshold:
-        basi.loc[count, "Outlier"] = "True"
+def zscore(data):
+    if len(data) == 0:
+        return null
     else:
-        basi.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(bacc.loc[:, "Ocean Freight Cost"])
-std = np.std(bacc.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in bacc["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    bacc.loc[count, "Z-score"] = z
-    if z > threshold:
-        bacc.loc[count, "Outlier"] = "True"
-    else:
-        bacc.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(bfau.loc[:, "Ocean Freight Cost"])
-std = np.std(bfau.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in bfau["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    bfau.loc[count, "Z-score"] = z
-    if z > threshold:
-        bfau.loc[count, "Outlier"] = "True"
-    else:
-        bfau.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(chan.loc[:, "Ocean Freight Cost"])
-std = np.std(chan.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in chan["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    chan.loc[count, "Z-score"] = z
-    if z > threshold:
-        chan.loc[count, "Outlier"] = "True"
-    else:
-        chan.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(disp.loc[:, "Ocean Freight Cost"])
-std = np.std(disp.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in disp["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    disp.loc[count, "Z-score"] = z
-    if z > threshold:
-        disp.loc[count, "Outlier"] = "True"
-    else:
-        disp.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(flam.loc[:, "Ocean Freight Cost"])
-std = np.std(flam.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in flam["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    flam.loc[count, "Z-score"] = z
-    if z > threshold:
-        flam.loc[count, "Outlier"] = "True"
-    else:
-        flam.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(flus.loc[:, "Ocean Freight Cost"])
-std = np.std(flus.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in flus["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    flus.loc[count, "Z-score"] = z
-    if z > threshold:
-        flus.loc[count, "Outlier"] = "True"
-    else:
-        flus.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(isli.loc[:, "Ocean Freight Cost"])
-std = np.std(isli.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in isli["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    isli.loc[count, "Z-score"] = z
-    if z > threshold:
-        isli.loc[count, "Outlier"] = "True"
-    else:
-        isli.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(kfac.loc[:, "Ocean Freight Cost"])
-std = np.std(kfac.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in kfac["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    kfac.loc[count, "Z-score"] = z
-    if z > threshold:
-        kfac.loc[count, "Outlier"] = "True"
-    else:
-        kfac.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(ksin.loc[:, "Ocean Freight Cost"])
-std = np.std(ksin.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in ksin["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    ksin.loc[count, "Z-score"] = z
-    if z > threshold:
-        ksin.loc[count, "Outlier"] = "True"
-    else:
-        ksin.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(kwar.loc[:, "Ocean Freight Cost"])
-std = np.std(kwar.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in kwar["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    kwar.loc[count, "Z-score"] = z
-    if z > threshold:
-        kwar.loc[count, "Outlier"] = "True"
-    else:
-        kwar.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(mirr.loc[:, "Ocean Freight Cost"])
-std = np.std(mirr.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in mirr["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    mirr.loc[count, "Z-score"] = z
-    if z > threshold:
-        mirr.loc[count, "Outlier"] = "True"
-    else:
-        mirr.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(olig.loc[:, "Ocean Freight Cost"])
-std = np.std(olig.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in olig["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    olig.loc[count, "Z-score"] = z
-    if z > threshold:
-        olig.loc[count, "Outlier"] = "True"
-    else:
-        olig.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(pend.loc[:, "Ocean Freight Cost"])
-std = np.std(pend.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in pend["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    pend.loc[count, "Z-score"] = z
-    if z > threshold:
-        pend.loc[count, "Outlier"] = "True"
-    else:
-        pend.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(repp.loc[:, "Ocean Freight Cost"])
-std = np.std(repp.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in repp["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    repp.loc[count, "Z-score"] = z
-    if z > threshold:
-        repp.loc[count, "Outlier"] = "True"
-    else:
-        repp.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(scur.loc[:, "Ocean Freight Cost"])
-std = np.std(scur.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in scur["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    scur.loc[count, "Z-score"] = z
-    if z > threshold:
-        scur.loc[count, "Outlier"] = "True"
-    else:
-        scur.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(sdor.loc[:, "Ocean Freight Cost"])
-std = np.std(sdor.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in sdor["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    sdor.loc[count, "Z-score"] = z
-    if z > threshold:
-        sdor.loc[count, "Outlier"] = "True"
-    else:
-        sdor.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(sfau.loc[:, "Ocean Freight Cost"])
-std = np.std(sfau.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in sfau["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    sfau.loc[count, "Z-score"] = z
-    if z > threshold:
-        sfau.loc[count, "Outlier"] = "True"
-    else:
-        sfau.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(shea.loc[:, "Ocean Freight Cost"])
-std = np.std(shea.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in shea["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    shea.loc[count, "Z-score"] = z
-    if z > threshold:
-        shea.loc[count, "Outlier"] = "True"
-    else:
-        shea.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(tlam.loc[:, "Ocean Freight Cost"])
-std = np.std(tlam.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in tlam["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    tlam.loc[count, "Z-score"] = z
-    if z > threshold:
-        tlam.loc[count, "Outlier"] = "True"
-    else:
-        tlam.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(toil.loc[:, "Ocean Freight Cost"])
-std = np.std(toil.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in toil["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    toil.loc[count, "Z-score"] = z
-    if z > threshold:
-        toil.loc[count, "Outlier"] = "True"
-    else:
-        toil.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(tlig.loc[:, "Ocean Freight Cost"])
-std = np.std(tlig.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in tlig["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    tlig.loc[count, "Z-score"] = z
-    if z > threshold:
-        tlig.loc[count, "Outlier"] = "True"
-    else:
-        tlig.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(ucab.loc[:, "Ocean Freight Cost"])
-std = np.std(ucab.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in ucab["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    ucab.loc[count, "Z-score"] = z
-    if z > threshold:
-        ucab.loc[count, "Outlier"] = "True"
-    else:
-        ucab.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(vani.loc[:, "Ocean Freight Cost"])
-std = np.std(vani.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in vani["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    vani.loc[count, "Z-score"] = z
-    if z > threshold:
-        vani.loc[count, "Outlier"] = "True"
-    else:
-        vani.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(vlig.loc[:, "Ocean Freight Cost"])
-std = np.std(vlig.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in vlig["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    vlig.loc[count, "Z-score"] = z
-    if z > threshold:
-        vlig.loc[count, "Outlier"] = "True"
-    else:
-        vlig.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(whar.loc[:, "Ocean Freight Cost"])
-std = np.std(whar.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in whar["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    whar.loc[count, "Z-score"] = z
-    if z > threshold:
-        whar.loc[count, "Outlier"] = "True"
-    else:
-        whar.loc[count, "Outlier"] = "False"
-    count = count + 1
-mean = np.mean(wsco.loc[:, "Ocean Freight Cost"])
-std = np.std(wsco.loc[:, "Ocean Freight Cost"])
-count = 0
-for i in wsco["Ocean Freight Cost"]:
-    z = (i-mean)/std
-    wsco.loc[count, "Z-score"] = z
-    if z > threshold:
-        wsco.loc[count, "Outlier"] = "True"
-    else:
-        wsco.loc[count, "Outlier"] = "False"
-    count = count + 1
+        mean = np.mean(data.loc[:, "Ocean Freight Cost"])
+        std = np.std(data.loc[:, "Ocean Freight Cost"])
+        if std == 0:
+            data.loc[:, "Outlier"] = "False"
+        else:
+            count = 0
+            for i in data["Ocean Freight Cost"]:
+                z = (i - mean) / std
+                data.loc[count, "Z-score"] = z
+                if z > threshold:
+                    data.loc[count, "Outlier"] = "True"
+                else:
+                    data.loc[count, "Outlier"] = "False"
+                count = count + 1
+
+
+
+zscore(basi)
+zscore(bacc)
+zscore(bfau)
+zscore(chan)
+zscore(disp)
+zscore(flam)
+zscore(flus)
+zscore(isli)
+zscore(kfac)
+zscore(ksin)
+zscore(kwar)
+zscore(mirr)
+zscore(olig)
+zscore(pend)
+zscore(repp)
+zscore(scur)
+zscore(sdor)
+zscore(sfau)
+zscore(shea)
+zscore(tlam)
+zscore(toil)
+zscore(tlig)
+zscore(ucab)
+zscore(vani)
+zscore(vlig)
+zscore(whar)
+zscore(wsco)
 
 
 ################################################## Creating Fails DF ###################################################
@@ -441,6 +192,12 @@ outlier = pd.concat([outlier, vani[vani["Outlier"] == "True"]], ignore_index=Tru
 outlier = pd.concat([outlier, vlig[vlig["Outlier"] == "True"]], ignore_index=True)
 outlier = pd.concat([outlier, whar[whar["Outlier"] == "True"]], ignore_index=True)
 outlier = pd.concat([outlier, wsco[wsco["Outlier"] == "True"]], ignore_index=True)
+
+
+################################################ Inverse Transformation ################################################
+
+outlier["Ocean Freight Cost"] = np.exp(outlier["Ocean Freight Cost"])
+
 
 ##################################################### FILE OUTPUTS #####################################################
 
