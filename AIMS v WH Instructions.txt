@@ -1,0 +1,13 @@
+AIMS v WH 
+
+DATA COLLECTION (AIMS):
+-Run US, CA WHSE Sales and OH Report First as it need all the same data.
+-Obtain Warehouse information from O'Neil. Client; EN002  Site; 95(Savannah), ROC(ON)
+Rename both files to "Inventory ON" and "Inventory SV" respectively.
+-Place files under joint project folder raw files
+
+RUNNING:
+-Run jupyter notebook
+- replace date in file name and copy format from an older file. 
+- place this file and US, CA WHSE Sales and OH in a folder labeled "MM.DD.YY" (fill in date)
+-File under historical, do the same with the raw file and place under archive.
