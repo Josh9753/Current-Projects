@@ -6,7 +6,6 @@
 import pandas as pd
 import numpy as np
 
-
 ######################################################## PATHS #########################################################
 
 on7_inv_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-ON-Inv.xls'
@@ -17,8 +16,10 @@ sv13_inv_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint
 on_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory ON.xlsx'
 sv_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory SV.xlsx'
 
+oo7p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7 - Open Order.csv'
+oo13p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13 - Open Order.csv'
 #### Output: Change Date to Today!!!!!!!!!!!!!!!
-save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock 07.13.22.xlsx'
+save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock TODAY.xlsx'
 
 # Difference Tolerance in units(Fail tolerance)
 tol = 10
@@ -38,6 +39,11 @@ sv_AIMS = pd.concat(frame, ignore_index=True)
 
 on_ACTUAL = pd.read_excel(on_A_p, engine='openpyxl')
 sv_ACTUAL = pd.read_excel(sv_A_p, engine='openpyxl')
+
+oo7 = pd.read_csv(oo7p)
+oo13 = pd.read_csv(oo13p)
+frame = [oo7, oo13]
+oo = pd.concat(frame, ignore_index=True)
 
 ##################################################### Changes ##########################################################
 # Creating WH col
@@ -66,9 +72,9 @@ sv_ACTUAL['Sty_Color'] = sv_ACTUAL['Style']
 del sv_ACTUAL['Style']
 
 on_AIMS = on_AIMS[['WH', 'style', 'grp', 'desc', 'color', 'division', 'cubic_ft', 'weight', 'master_pack', 'AIMS Stock',
-                                'caseqty', 'cubic']]
+                   'caseqty', 'cubic']]
 sv_AIMS = sv_AIMS[['WH', 'style', 'grp', 'desc', 'color', 'division', 'cubic_ft', 'weight', 'master_pack', 'AIMS Stock',
-                                'caseqty', 'cubic']]
+                   'caseqty', 'cubic']]
 
 # Creating Sty_col column
 on_AIMS["Sty_Color"] = on_AIMS["style"] + "_" + on_AIMS["color"]
@@ -78,7 +84,7 @@ sv_AIMS["Sty_Color"] = sv_AIMS["style"] + "_" + sv_AIMS["color"]
 on_AIMS_master = pd.merge(on_AIMS, on_ACTUAL, on='Sty_Color', how='left')
 sv_AIMS_master = pd.merge(sv_AIMS, sv_ACTUAL, on='Sty_Color', how='left')
 
-#rename
+# rename
 on_AIMS_master['WH Stock'] = on_AIMS_master['Available']
 del on_AIMS_master['Available']
 sv_AIMS_master['WH Stock'] = sv_AIMS_master['Available']
@@ -100,9 +106,9 @@ sv_ACTUAL['Description'] = sv_ACTUAL['Descr']
 del sv_ACTUAL['Descr']
 
 on_AIMS_master = on_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight',
-                                'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'WH Stock']]
+                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'WH Stock']]
 sv_AIMS_master = sv_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight',
-                                'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'WH Stock']]
+                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'WH Stock']]
 
 # Handling nulls
 on_AIMS_master["WH Stock"] = on_AIMS_master["WH Stock"].fillna(0)
@@ -112,16 +118,86 @@ on_AIMS_master['AIMS Stock'] = on_AIMS_master['AIMS Stock'].astype(float)
 sv_AIMS_master['AIMS Stock'] = sv_AIMS_master['AIMS Stock'].astype(float)
 on_AIMS_master['WH Stock'] = on_AIMS_master['WH Stock'].astype(float)
 sv_AIMS_master['WH Stock'] = sv_AIMS_master['WH Stock'].astype(float)
-# difference col to create fails
-on_AIMS_master['Diff'] = on_AIMS_master["AIMS Stock"] - on_AIMS_master["WH Stock"]
-sv_AIMS_master['Diff'] = sv_AIMS_master["AIMS Stock"] - sv_AIMS_master["WH Stock"]
 
+
+####################################### Method to remove Open Orders from stock ########################################
+
+oo["Sty_Color"] = oo["style"] + "_" + oo["color"]
+oo_ON = oo[oo["loc"] == "ON"]
+oo_SV = oo[oo["loc"] == "SV"]
+oo_ON.reindex()
+oo_SV.reindex()
+
+#ON Logic
+dupON = oo_ON[oo_ON["Sty_Color"].duplicated(keep='first')]
+oo_ON = oo_ON.drop_duplicates(subset="Sty_Color")
+dupON.reindex()
+oo_ON.reindex()
+
+totOO = pd.DataFrame()
+dupON["pikqty2"] = dupON["pikqty"]
+dupON = dupON[["Sty_Color", "pikqty2"]]
+oo_ON = oo_ON[["Sty_Color", "pikqty"]]
+
+for index, row in enumerate(oo_ON.itertuples(), 0):
+    temp = oo_ON.iloc[index].loc["pikqty"]
+    for index2, row2 in enumerate(dupON.itertuples(), 0):
+        if oo_ON.iloc[index].loc["Sty_Color"] == dupON.iloc[index2].loc["Sty_Color"]:
+            temp = dupON.iloc[index2].loc["pikqty2"] + temp
+    size = len(totOO.index)
+    totOO.loc[size,"pikqtyTOT"] = temp
+    totOO.loc[size, "Sty_Color"] = oo_ON.iloc[index].loc["Sty_Color"]
+
+totOO.reset_index()
+
+
+on_AIMS_master = pd.merge(on_AIMS_master, totOO, how='left', on="Sty_Color")
+on_AIMS_master["pikqtyTOT"] = on_AIMS_master["pikqtyTOT"].fillna(0)
+on_AIMS_master["Adjusted Stock"] = on_AIMS_master["AIMS Stock"] - on_AIMS_master["pikqtyTOT"]
+on_AIMS_master = on_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight',
+                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'Adjusted Stock', 'WH Stock']]
+
+#SV Logic
+dupSV = oo_SV[oo_SV["Sty_Color"].duplicated(keep='first')]
+oo_SV = oo_SV.drop_duplicates(subset="Sty_Color")
+dupSV.reindex()
+oo_SV.reindex()
+
+totOOSV = pd.DataFrame()
+dupSV["pikqty2"] = dupSV["pikqty"]
+dupSV = dupSV[["Sty_Color", "pikqty2"]]
+oo_SV = oo_SV[["Sty_Color", "pikqty"]]
+
+for index, row in enumerate(oo_SV.itertuples(), 0):
+    temp = oo_SV.iloc[index].loc["pikqty"]
+    for index2, row2 in enumerate(dupSV.itertuples(), 0):
+        if oo_SV.iloc[index].loc["Sty_Color"] == dupSV.iloc[index2].loc["Sty_Color"]:
+            temp = dupSV.iloc[index2].loc["pikqty2"] + temp
+    size = len(totOOSV.index)
+    totOOSV.loc[size,"pikqtyTOT"] = temp
+    totOOSV.loc[size, "Sty_Color"] = oo_SV.iloc[index].loc["Sty_Color"]
+
+totOOSV.reset_index()
+
+
+sv_AIMS_master = pd.merge(sv_AIMS_master, totOOSV, how='left', on="Sty_Color")
+sv_AIMS_master["pikqtyTOT"] = sv_AIMS_master["pikqtyTOT"].fillna(0)
+sv_AIMS_master["Adjusted Stock"] = sv_AIMS_master["AIMS Stock"] - sv_AIMS_master["pikqtyTOT"]
+sv_AIMS_master = sv_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight',
+                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'Adjusted Stock', 'WH Stock']]
+
+
+# difference col to create fails
+on_AIMS_master['Diff'] = on_AIMS_master["Adjusted Stock"] - on_AIMS_master["WH Stock"]
+sv_AIMS_master['Diff'] = sv_AIMS_master["Adjusted Stock"] - sv_AIMS_master["WH Stock"]
 
 # Data type conversion
 on_AIMS_master['Diff'] = on_AIMS_master['Diff'].astype(float)
 on_AIMS_master['Diff'] = on_AIMS_master['Diff'].abs()
 sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].astype(float)
 sv_AIMS_master['Diff'] = sv_AIMS_master['Diff'].abs()
+
+
 # Create Fail Col
 conditions = [(on_AIMS_master['Diff'] >= tol), (on_AIMS_master['Diff'] < tol), (on_AIMS_master['Diff'] == None)]
 values = ['Fail', 'Pass', 'Pass']
@@ -161,6 +237,7 @@ sv_ACTUAL = sv_ACTUAL[['Customer', 'Facility', 'Item', 'Description', 'Color', '
                        'Case Qty', 'Length', 'Height', 'Width', 'Weight', 'Cube Each', 'CFT Each Per Line', 'Group',
                        'Date']]
 
+print(on_AIMS_master[on_AIMS_master["Sty_Color"]=="P212_CLR"],"WH Stock")
 ##################################################### FILE OUTPUTS #####################################################
 
 fileName = pd.ExcelWriter(save_Loc, engine='xlsxwriter')
@@ -175,4 +252,6 @@ sv_ACTUAL.to_excel(fileName, sheet_name='SV WH INV', index=False)
 
 # SUM OUT
 fail_sum.to_excel(fileName, sheet_name='Fail Sum', index=False)
+
+
 fileName.save()
