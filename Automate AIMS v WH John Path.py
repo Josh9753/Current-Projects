@@ -5,7 +5,7 @@ Desc: Script to compare AIMS system INV to Warehouse self-reported INV, account 
     and allocated stock, institute Fail conditions, flag fails based on a difference tolerance. Special pass conditions 
     included to account for real-time delays in PikQty(OO) at WH
     
-PARAM: AIMS INV, WH ACTUALS xls, WH AIMS.xls
+PARAM: AIMS INV, AIMS OpenOrders, WH ACTUALS xls, WH AIMS.xls
 
 OUT:Single XLSX file containing tabs for AIMS vs ACTUALS, and fails summary tab, which contains all failed Styles 
 """
