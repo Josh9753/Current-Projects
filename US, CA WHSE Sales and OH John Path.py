@@ -1,11 +1,17 @@
-# Authors: John Ayres, Joshua Kemperman
-# Desc: Script to process INV/Sales, and Summary containing all INV/Sales JOHN PATH IN PROGRESS, ADDING FUNCTIONALITY
-# PARAM: Input files as listed under pathing; Warehouse INV/OHS by data group and INV Report
-# OUTPUT: Multipage excel Document, listing total INV/OHS by warehouse, Sheets containing totals of INV/OHS
+"""
+Authors: John Ayres, Joshua Kemperman
+
+Desc: Script to process INV/Sales by month by WH, and Summary containing all INV/Sales by month/WH
+
+PARAM: Input files as listed under pathing; Warehouse INV/OHS by data group and INV Report
+
+OUTPUT: Multipage excel Document, listing total INV/OHS by warehouse, Sheets containing totals of INV/OHS
+"""
 
 import pandas as pd
 
 ######################################################## PATHS #########################################################
+
 si7_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-SI.xls'
 si13_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13-SI.xls'
 on7_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-ON.xls'
@@ -23,7 +29,7 @@ sv13_inv_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint
 iv_rep = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\05 - INVENTORY\Inventory Report_July 11, 2022.xlsx'
 
 #### CHANGE DATE TO TODAY
-save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\US, CA WHSE Sales and OH TODAYTEST.xlsx'
+save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\US, CA WHSE Sales and OH TODAY.xlsx'
 
 
 ################################################## CREATE DATA FRAMES ##################################################
@@ -60,6 +66,7 @@ frame = [sv7_inv, sv13_inv]
 sv_inv_master = pd.concat(frame, ignore_index=True)
 
 inv_rep = pd.read_excel(iv_rep, header=2)
+
 
 ##################################################### Changes ##########################################################
 
@@ -155,7 +162,9 @@ sv_inv_master = sv_inv_master[['WH', 'style', 'group', 'description', 'color', '
 si_sales_master['WH'] = si_sales_master['WH'].astype(str)
 si_sales_master['amount'] = si_sales_master['amount'].astype(float)
 
+
 ################################################### Creating Master sheets #############################################
+
 frame = [si_sales_master, on_sales_master, sv_sales_master]
 sales_master = pd.concat(frame, ignore_index=True)
 
@@ -164,6 +173,7 @@ inv_master = pd.concat(frame, ignore_index=True)
 
 
 ####################################################### Changes ########################################################
+
 # DF merge to obtain CBM and CasePack from INV for SalesMaster(VLOOKUP SIM)
 sales_master["ID"] = sales_master["style"]+sales_master["color"]
 
@@ -217,7 +227,7 @@ def maketable(sheetname, colname, whname):
     molist = [mo_01, mo_02, mo_03, mo_04, mo_05, mo_06, mo_07, mo_08, mo_09, mo_10, mo_11, mo_12, mo_sum]
     sheetname[whname] = molist
 
-
+# Note: Must call makeTable FIRST!!!!!
 # sheetname: df variable name; sales_month_master, unit_month_master, cbm_month_master
 def maketot(sheetname):
     tot01 = sheetname.loc[0, 'ON'] + sheetname.loc[0, 'SI'] + sheetname.loc[0, 'SV']
@@ -251,6 +261,7 @@ maketot(sales_month_master)
 
 
 #################################### Units by WH by month ##############################################################
+
 unit_month = pd.DataFrame()
 unit_month_master = pd.DataFrame(months, columns=['Month'])
 
@@ -262,6 +273,7 @@ maketot(unit_month_master)
 
 
 ############################################### Creating CBM by WH by mth ##############################################
+
 cbm_month = pd.DataFrame()
 cbm_month_master = pd.DataFrame(months, columns=['Month'])
 
@@ -281,6 +293,7 @@ cbf_month_master['SI'] = cbm_month_master['SI'] * 35.3146667
 cbf_month_master['SV'] = cbm_month_master['SV'] * 35.3146667
 cbf_month_master['Grand Total'] = cbm_month_master['Grand Total'] * 35.3146667
 
+
 ############################################### Creating Unit by WH Total ##############################################
 
 unit_tot_on = sum(on_inv_master['unit'])
@@ -290,6 +303,7 @@ unit_tot_tot = unit_tot_on+unit_tot_si+unit_tot_sv
 unit_tot = pd.DataFrame({'': ["Sum of Unit"], 'ON': [unit_tot_on], 'SI': [unit_tot_si], 'SV': [unit_tot_sv],
                          'GrandTotal': [unit_tot_tot]})
 
+
 ############################################## Creating Cubic by WH Total ##############################################
 
 cube_tot_on = sum(on_inv_master['cubic'])
@@ -298,8 +312,9 @@ cube_tot_sv = sum(sv_inv_master['cubic'])
 cube_tot_tot = cube_tot_on+cube_tot_si+cube_tot_sv
 cube_tot = pd.DataFrame({'': ["Sum of Cubic"], 'ON': [cube_tot_on], 'SI': [cube_tot_si], 'SV': [cube_tot_sv],
                          'GrandTotal': [cube_tot_tot]})
-##################################################### FILE OUTPUTS #####################################################
 
+
+##################################################### FILE OUTPUTS #####################################################
 
 fileConstructor = pd.ExcelWriter(save_Loc, engine='xlsxwriter')
 
