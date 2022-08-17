@@ -2,16 +2,17 @@
 Author(s): John Ayres
 
 Desc: Script to compare AIMS system INV to Warehouse self-reported INV, account for Open orders, Picked order quantities
-    and allocated stock, institute Fail conditions, flag fails based on a difference tolerance. Special pass conditions 
+    and allocated stock, institute Fail conditions, flag fails based on a difference tolerance. Special pass conditions
     included to account for real-time delays in PikQty(OO) at WH
-    
+
 PARAM: AIMS INV, AIMS OpenOrders, WH ACTUALS xls, WH AIMS.xls
 
-OUT:Single XLSX file containing tabs for AIMS vs ACTUALS, and fails summary tab, which contains all failed Styles 
+OUT:Single XLSX file containing tabs for AIMS vs ACTUALS, and fails summary tab, which contains all failed Styles
 """
 
 import pandas as pd
 import numpy as np
+
 
 ######################################################## PATHS #########################################################
 
@@ -31,6 +32,7 @@ save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint P
 
 # Difference Tolerance in units(Fail tolerance)
 tol = 50
+
 
 ################################################## CREATE DATA FRAMES ##################################################
 
@@ -53,7 +55,9 @@ oo13 = pd.read_csv(oo13p)
 frame = [oo7, oo13]
 oo = pd.concat(frame, ignore_index=True)
 
+
 ##################################################### Changes ##########################################################
+
 # Creating WH col
 on_AIMS["WH"] = 'ON'
 sv_AIMS["WH"] = 'SV'
@@ -227,12 +231,12 @@ sv_AIMS_master['Qty Close'] = np.select(conditions, values, default=0)
 
 # Special pass conditions based on PikQty delay
 for index, row in enumerate(on_AIMS_master.itertuples()):
-    if (on_AIMS_master.iloc[index].loc["WH Stock"] == on_AIMS_master.iloc[index].loc["Adjusted Stock"] or 
+    if (on_AIMS_master.iloc[index].loc["WH Stock"] == on_AIMS_master.iloc[index].loc["Adjusted Stock"] or
             on_AIMS_master.iloc[index].loc["WH Stock"] == on_AIMS_master.iloc[index].loc["AIMS Stock"]):
         on_AIMS_master.loc[index, "Qty Close"] = "Pass"
 
 for index, row in enumerate(sv_AIMS_master.itertuples()):
-    if (sv_AIMS_master.iloc[index].loc["WH Stock"] == sv_AIMS_master.iloc[index].loc["Adjusted Stock"] or 
+    if (sv_AIMS_master.iloc[index].loc["WH Stock"] == sv_AIMS_master.iloc[index].loc["Adjusted Stock"] or
             sv_AIMS_master.iloc[index].loc["WH Stock"] == sv_AIMS_master.iloc[index].loc["AIMS Stock"]):
         sv_AIMS_master.loc[index, "Qty Close"] = "Pass"
 
