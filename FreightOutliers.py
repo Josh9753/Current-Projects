@@ -1,7 +1,18 @@
-# Authors: John Ayres
-# Desc: identifies freight cost outliers through a normalized z-score. data is log normal.
-# PARAM: Inventory Report.xlsx
-# OUT: xlsx file cleanly listing PO's and relative information in their own cell
+"""
+Authors: John Ayres
+
+Desc: identifies freight cost outliers through a normalized z-score. Data is log normal.
+
+PARAM: Inventory Report.xlsx
+
+OUT: xlsx file cleanly listing PO's and relative information in their own cell
+
+NOTE: Items are not to be strictly considered mathematical outliers. The purpose of this program is to identify items
+    whose freight cost is abnormally higher than respective items in order to investigate the increased price. The
+    Z-score attached in not always statistically significant or accurate due to the nature of the data (small sample
+    size, etc).
+"""
+
 import pandas as pd
 import numpy as np
 
@@ -12,9 +23,11 @@ invp = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\05 - INVENTORY
 
 inv = pd.read_excel(invp, engine='openpyxl', header=2)
 
-threshold = 1.86 #Z-score threshold (2 is less conservative, 1.86 is traditional value used)
+# Z-score threshold (2 is less conservative, 1.86 is a traditional value used)
+threshold = 1.86
 
 save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Freight Outlier Report TODAY.xlsx'
+
 ############################################# Categorization and data type #############################################
 
 inv["Category"] = inv["Category"].astype('category')
@@ -114,23 +127,17 @@ wsco.reset_index(drop=True, inplace=True)
 ################################################## Calculating Fails ###################################################
 
 def zscore(data):
-    if len(data) == 0:
-        return null
-    else:
-        mean = np.mean(data.loc[:, "Ocean Freight Cost"])
-        std = np.std(data.loc[:, "Ocean Freight Cost"])
-        if std == 0:
-            data.loc[:, "Outlier"] = "False"
+    mean = np.mean(data.loc[:, "Ocean Freight Cost"])
+    std = np.std(data.loc[:, "Ocean Freight Cost"])
+    count = 0
+    for i in data["Ocean Freight Cost"]:
+        z = (i - mean) / std
+        data.loc[count, "Z-score"] = z
+        if z > threshold:
+            data.loc[count, "Outlier"] = "True"
         else:
-            count = 0
-            for i in data["Ocean Freight Cost"]:
-                z = (i - mean) / std
-                data.loc[count, "Z-score"] = z
-                if z > threshold:
-                    data.loc[count, "Outlier"] = "True"
-                else:
-                    data.loc[count, "Outlier"] = "False"
-                count = count + 1
+            data.loc[count, "Outlier"] = "False"
+        count = count + 1
 
 
 
@@ -164,6 +171,7 @@ zscore(wsco)
 
 
 ################################################## Creating Fails DF ###################################################
+
 outlier = pd.DataFrame()
 outlier = pd.concat([outlier, basi[basi["Outlier"] == "True"]], ignore_index=True)
 outlier = pd.concat([outlier, bacc[bacc["Outlier"] == "True"]], ignore_index=True)
