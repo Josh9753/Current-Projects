@@ -1,7 +1,14 @@
-# Authors: John Ayres
-# Desc: Script to compare AIMS system INV to Warehouse self-reported INV, institute Fail conditions, flag fails
-# PARAM: WH ACTUALS xls, WH AIMS.xls
-# OUT:Single XLSX file containing tabs for AIMS vs ACTUALS, and fails summary tab, which contains all failed Styles
+"""
+Author(s): John Ayres
+
+Desc: Script to compare AIMS system INV to Warehouse self-reported INV, account for Open orders, Picked order quantities
+    and allocated stock, institute Fail conditions, flag fails based on a difference tolerance. Special pass conditions 
+    included to account for real-time delays in PikQty(OO) at WH
+    
+PARAM: AIMS INV, WH ACTUALS xls, WH AIMS.xls
+
+OUT:Single XLSX file containing tabs for AIMS vs ACTUALS, and fails summary tab, which contains all failed Styles 
+"""
 
 import pandas as pd
 import numpy as np
@@ -18,11 +25,12 @@ sv_A_p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Pro
 
 oo7p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7 - Open Order.csv'
 oo13p = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13 - Open Order.csv'
-#### Output: Change Date to Today!!!!!!!!!!!!!!!
+
+# Output: Change Date to Today!!!!!!!!!!!!!!!
 save_Loc = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\39 Joint Project\WH Stock vs AIMS stock TODAY.xlsx'
 
 # Difference Tolerance in units(Fail tolerance)
-tol = 10
+tol = 50
 
 ################################################## CREATE DATA FRAMES ##################################################
 
@@ -66,10 +74,10 @@ del on_AIMS['on_cubic']
 sv_AIMS['cubic'] = sv_AIMS['sv_cubic']
 del sv_AIMS['sv_cubic']
 
-on_ACTUAL['Sty_Color'] = on_ACTUAL['Style']
-del on_ACTUAL['Style']
-sv_ACTUAL['Sty_Color'] = sv_ACTUAL['Style']
-del sv_ACTUAL['Style']
+on_ACTUAL['Sty_Color'] = on_ACTUAL['Item']
+del on_ACTUAL['Item']
+sv_ACTUAL['Sty_Color'] = sv_ACTUAL['Item']
+del sv_ACTUAL['Item']
 
 on_AIMS = on_AIMS[['WH', 'style', 'grp', 'desc', 'color', 'division', 'cubic_ft', 'weight', 'master_pack', 'AIMS Stock',
                    'caseqty', 'cubic']]
@@ -85,9 +93,14 @@ on_AIMS_master = pd.merge(on_AIMS, on_ACTUAL, on='Sty_Color', how='left')
 sv_AIMS_master = pd.merge(sv_AIMS, sv_ACTUAL, on='Sty_Color', how='left')
 
 # rename
-on_AIMS_master['WH Stock'] = on_AIMS_master['Available']
+on_AIMS_master['WH Stock'] = on_AIMS_master['Qty']
+del on_AIMS_master['Qty']
+sv_AIMS_master['WH Stock'] = sv_AIMS_master['Qty']
+del sv_AIMS_master['Qty']
+
+on_AIMS_master['WH Adjusted'] = on_AIMS_master['Available']
 del on_AIMS_master['Available']
-sv_AIMS_master['WH Stock'] = sv_AIMS_master['Available']
+sv_AIMS_master['WH Adjusted'] = sv_AIMS_master['Available']
 del sv_AIMS_master['Available']
 
 on_AIMS_master['description'] = on_AIMS_master['desc']
@@ -106,18 +119,22 @@ sv_ACTUAL['Description'] = sv_ACTUAL['Descr']
 del sv_ACTUAL['Descr']
 
 on_AIMS_master = on_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight',
-                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'WH Stock']]
+                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'WH Stock', 'WH Adjusted']]
 sv_AIMS_master = sv_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight',
-                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'WH Stock']]
+                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'WH Stock', 'WH Adjusted']]
 
 # Handling nulls
 on_AIMS_master["WH Stock"] = on_AIMS_master["WH Stock"].fillna(0)
 sv_AIMS_master["WH Stock"] = sv_AIMS_master["WH Stock"].fillna(0)
+on_AIMS_master["WH Adjusted"] = on_AIMS_master["WH Adjusted"].fillna(0)
+sv_AIMS_master["WH Adjusted"] = sv_AIMS_master["WH Adjusted"].fillna(0)
 
 on_AIMS_master['AIMS Stock'] = on_AIMS_master['AIMS Stock'].astype(float)
 sv_AIMS_master['AIMS Stock'] = sv_AIMS_master['AIMS Stock'].astype(float)
 on_AIMS_master['WH Stock'] = on_AIMS_master['WH Stock'].astype(float)
 sv_AIMS_master['WH Stock'] = sv_AIMS_master['WH Stock'].astype(float)
+on_AIMS_master["WH Adjusted"] = on_AIMS_master["WH Adjusted"].astype(float)
+sv_AIMS_master["WH Adjusted"] = sv_AIMS_master["WH Adjusted"].astype(float)
 
 
 ####################################### Method to remove Open Orders from stock ########################################
@@ -155,7 +172,8 @@ on_AIMS_master = pd.merge(on_AIMS_master, totOO, how='left', on="Sty_Color")
 on_AIMS_master["pikqtyTOT"] = on_AIMS_master["pikqtyTOT"].fillna(0)
 on_AIMS_master["Adjusted Stock"] = on_AIMS_master["AIMS Stock"] - on_AIMS_master["pikqtyTOT"]
 on_AIMS_master = on_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight',
-                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'Adjusted Stock', 'WH Stock']]
+                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'Adjusted Stock',
+                                 'WH Stock', "WH Adjusted"]]
 
 #SV Logic
 dupSV = oo_SV[oo_SV["Sty_Color"].duplicated(keep='first')]
@@ -184,12 +202,13 @@ sv_AIMS_master = pd.merge(sv_AIMS_master, totOOSV, how='left', on="Sty_Color")
 sv_AIMS_master["pikqtyTOT"] = sv_AIMS_master["pikqtyTOT"].fillna(0)
 sv_AIMS_master["Adjusted Stock"] = sv_AIMS_master["AIMS Stock"] - sv_AIMS_master["pikqtyTOT"]
 sv_AIMS_master = sv_AIMS_master[['WH', 'style', 'group', 'description', 'color', 'division', 'cubic_ft', 'weight',
-                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'Adjusted Stock', 'WH Stock']]
+                                 'master_pack', 'caseqty', 'cubic', 'Sty_Color', 'AIMS Stock', 'Adjusted Stock',
+                                 'WH Stock', "WH Adjusted"]]
 
 
 # difference col to create fails
-on_AIMS_master['Diff'] = on_AIMS_master["Adjusted Stock"] - on_AIMS_master["WH Stock"]
-sv_AIMS_master['Diff'] = sv_AIMS_master["Adjusted Stock"] - sv_AIMS_master["WH Stock"]
+on_AIMS_master['Diff'] = on_AIMS_master["Adjusted Stock"] - on_AIMS_master["WH Adjusted"]
+sv_AIMS_master['Diff'] = sv_AIMS_master["Adjusted Stock"] - sv_AIMS_master["WH Adjusted"]
 
 # Data type conversion
 on_AIMS_master['Diff'] = on_AIMS_master['Diff'].astype(float)
@@ -206,22 +225,31 @@ conditions = [(sv_AIMS_master['Diff'] >= tol), (sv_AIMS_master['Diff'] < tol), (
 values = ['Fail', 'Pass', 'Pass']
 sv_AIMS_master['Qty Close'] = np.select(conditions, values, default=0)
 
+# Special pass conditions based on PikQty delay
+for index, row in enumerate(on_AIMS_master.itertuples()):
+    if (on_AIMS_master.iloc[index].loc["WH Stock"] == on_AIMS_master.iloc[index].loc["Adjusted Stock"] or 
+            on_AIMS_master.iloc[index].loc["WH Stock"] == on_AIMS_master.iloc[index].loc["AIMS Stock"]):
+        on_AIMS_master.loc[index, "Qty Close"] = "Pass"
+
+for index, row in enumerate(sv_AIMS_master.itertuples()):
+    if (sv_AIMS_master.iloc[index].loc["WH Stock"] == sv_AIMS_master.iloc[index].loc["Adjusted Stock"] or 
+            sv_AIMS_master.iloc[index].loc["WH Stock"] == sv_AIMS_master.iloc[index].loc["AIMS Stock"]):
+        sv_AIMS_master.loc[index, "Qty Close"] = "Pass"
+
 # creating  Fails sum
 frame = [on_AIMS_master, sv_AIMS_master]
 fail_sum = pd.concat(frame, ignore_index=True)
 fail_sum = fail_sum.loc[fail_sum['Qty Close'] == 'Fail']
 
 # Cleaning Fails Sum
-fail_sum = fail_sum[['Sty_Color', 'WH', 'AIMS Stock', 'WH Stock', 'Diff']]
+fail_sum = fail_sum[['Sty_Color', 'WH', 'AIMS Stock', 'Adjusted Stock', 'WH Stock', 'WH Adjusted', 'Diff']]
 fail_sum['Style & Color'] = fail_sum['Sty_Color']
 del fail_sum['Sty_Color']
 fail_sum['Difference'] = fail_sum['Diff']
 del fail_sum['Diff']
-fail_sum = fail_sum[['Style & Color', 'WH', 'AIMS Stock', 'WH Stock', 'Difference']]
+fail_sum = fail_sum[['Style & Color', 'WH','AIMS Stock', 'Adjusted Stock', 'WH Stock', 'WH Adjusted', 'Difference']]
 
 # Cleaning data
-del on_ACTUAL['Sty_Color']
-del sv_ACTUAL['Sty_Color']
 del on_ACTUAL['Code']
 del sv_ACTUAL['Code']
 del on_ACTUAL['NMFC']
@@ -230,14 +258,14 @@ on_ACTUAL['WH Stock'] = on_ACTUAL['Qty']
 del on_ACTUAL['Qty']
 sv_ACTUAL['WH Stock'] = sv_ACTUAL['Qty']
 del sv_ACTUAL['Qty']
-on_ACTUAL = on_ACTUAL[['Customer', 'Facility', 'Item', 'Description', 'Color', 'Size', 'WH Stock', 'Available',
+on_ACTUAL = on_ACTUAL[['Customer', 'Facility', 'Sty_Color', 'Description', 'Color', 'Size', 'WH Stock', 'Available',
                        'Case Qty', 'Length', 'Height', 'Width', 'Weight', 'Cube Each', 'CFT Each Per Line', 'Group',
                        'Date']]
-sv_ACTUAL = sv_ACTUAL[['Customer', 'Facility', 'Item', 'Description', 'Color', 'Size', 'WH Stock', 'Available',
+sv_ACTUAL = sv_ACTUAL[['Customer', 'Facility', 'Sty_Color', 'Description', 'Color', 'Size', 'WH Stock', 'Available',
                        'Case Qty', 'Length', 'Height', 'Width', 'Weight', 'Cube Each', 'CFT Each Per Line', 'Group',
                        'Date']]
 
-print(on_AIMS_master[on_AIMS_master["Sty_Color"]=="P212_CLR"],"WH Stock")
+
 ##################################################### FILE OUTPUTS #####################################################
 
 fileName = pd.ExcelWriter(save_Loc, engine='xlsxwriter')
