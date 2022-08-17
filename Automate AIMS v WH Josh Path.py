@@ -13,6 +13,7 @@ OUT:Single XLSX file containing tabs for AIMS vs ACTUALS, and fails summary tab,
 import pandas as pd
 import numpy as np
 
+
 ######################################################## PATHS #########################################################
 
 on7_inv_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7-ON-Inv.xls'
@@ -31,6 +32,7 @@ save_Loc = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 J
 
 # Difference Tolerance in units(Fail tolerance)
 tol = 50
+
 
 ################################################## CREATE DATA FRAMES ##################################################
 
@@ -53,7 +55,9 @@ oo13 = pd.read_csv(oo13p)
 frame = [oo7, oo13]
 oo = pd.concat(frame, ignore_index=True)
 
+
 ##################################################### Changes ##########################################################
+
 # Creating WH col
 on_AIMS["WH"] = 'ON'
 sv_AIMS["WH"] = 'SV'
