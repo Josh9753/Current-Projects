@@ -1,0 +1,46 @@
+<header>
+  <h1>Aims v WH</h1>
+</header>
+
+
+Note*
+Run US, CA WHSE Sales and OH first. This report is not dependent on the other, but it’s easier.
+File paths are unique to the user and must be updated for each user. All file paths are located at the top of the code.
+
+Description
+This report audits and inspects the stock information within AIMS and the self-reporting software for the ON and SV warehouses.
+The AIMS information is taken from Data 7 and 13. Stocks are tracked via Style and Color, underscore delimited (style_color). Open order information for data 7 and 13 is also taken to account for available stock. The program compares total stock between the warehouse and AIMS, as well as available (or adjusted stock). Special pass conditions are instituted so that open orders which were sent to the factory, yet not picked will not cause the style to fail. 
+
+Params
+on7_inv_p: ON data 7 Ship/Sales log
+on13_inv_p: ON data 13 Ship/Sales log
+sv7_inv_p: SV data 7 Ship/Sales log
+sv13_inv_p: SV data 13 Ship/Sales log
+on_A_p: ON Inventory Synapse information
+sv_A_p: SV Inventory Synapse information
+oo7p: Data 7 Open Orders
+oo13p: Data 13 Open Orders
+
+
+
+
+
+Running the Report
+DATA COLLECTION (AIMS):
+-Run “US, CA WHSE Sales and OH” Report First as it needs all the same data.
+-Obtain Warehouse information from O'Neil.
+O'Neil U/P:  EN_NAT 
+ Client; EN002  Site; 95(Savannah), ROC(ON)
+Rename both files to "Inventory ON" and "Inventory SV" respectively.
+-Place files under Documents\39 Joint Project\Raw Files
+
+-Obtain Open order Files for data 7/13 from 
+01 - AIMS RAW DATA\9 - HISTORICAL\MM.DD.YY  (Today)
+and place under Raw files
+
+RUNNING CODE/POST PROCESSING:
+-open jupyter notebook code(or IDE)
+-Run file
+-replace date in file name and copy format from an older file. 
+-place this file and US, CA WHSE Sales and OH in a folder labeled "MM.DD.YY" (fill in date)
+-File under historical, do the same with the raw files and place under archive.
