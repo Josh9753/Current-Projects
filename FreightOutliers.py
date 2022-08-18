@@ -19,7 +19,7 @@ import numpy as np
 
 ################################################### PATHS AND READ #####################################################
 
-invp = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\05 - INVENTORY\Inventory Report_July 25, 2022.xlsx'
+invp = r'C:\Users\John Ayres\OneDrive - Enchante Living\Documents\05 - INVENTORY\Inventory Report_August 18, 2022.xlsx'
 
 inv = pd.read_excel(invp, engine='openpyxl', header=2)
 
@@ -131,14 +131,17 @@ def zscore(data):
     std = np.std(data.loc[:, "Ocean Freight Cost"])
     count = 0
     for i in data["Ocean Freight Cost"]:
-        z = (i - mean) / std
-        data.loc[count, "Z-score"] = z
-        if z > threshold:
-            data.loc[count, "Outlier"] = "True"
-        else:
+        if std == 0:
             data.loc[count, "Outlier"] = "False"
+            data.loc[count, "Z-score"] = 0
+        else:
+            z = (i - mean) / std
+            data.loc[count, "Z-score"] = z
+            if z > threshold:
+                data.loc[count, "Outlier"] = "True"
+            else:
+                data.loc[count, "Outlier"] = "False"
         count = count + 1
-
 
 
 zscore(basi)
