@@ -22,7 +22,7 @@ sv7_inv_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 
 sv13_inv_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13-SV-Inv.xls'
 
 on_A_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory ON.xlsx'
-sv_A_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory ON.xlsx'
+sv_A_p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\Inventory SV.xlsx'
 
 oo7p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\7 - Open Order.csv'
 oo13p = r'C:\Users\Joshua Kemperman\OneDrive - Enchante Living\Documents\39 Joint Project\Raw Files\13 - Open Order.csv'
